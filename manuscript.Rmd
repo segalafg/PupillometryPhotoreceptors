@@ -196,7 +196,6 @@ return(mbs)}
 contrastsdB <- 20*log10(c(6,12,24,48,96))
 colpal <- c('#FE5000','#8783CF','#228B22','#808080','#6d008b','#8B8000')
 colpalmod <- c('#808080','#8B8000','#FE5000','#8783CF')
-targetelectrodes <- c('Oz','POz','O1','O2')
 
 if (processdata==2){
 # if we're going to need the pre-processed files, extract from zip file
@@ -338,11 +337,42 @@ We performed model fitting on the normalised amplitudes to account for amplitude
 
 ```{r luminance individual, include=FALSE, results='hide'}
 
-# (download and) analyse individual participant data for the luminance condition
+# (download and) analyse individual participant data for the luminance experiment
 if (processdata > 2){
 
-  for(p in 601:612){
-    participant <- paste0('P',p)
+  for(participant in 1:24){
+    
+    # only download and process data if this has not been done already for this participant
+    if (!file.exists(paste0(datadir,'P',600+participant,'summary.RData'))){   
+
+      # if there is no directory for this participant's data
+      if (!file.exists(paste0(rawdir,'P',600+participant))){
+        dir.create(paste0(rawdir,'P',600+participant))
+        
+       d <- dir(paste0(rawdir,'P',600+participant))
+       
+       if (length(d)==0){
+         
+         # if the tar file of this participant's data doesn't exist
+         if (!file.exists(paste0(rawdir,'P',600+participant,'.zip'))){
+           # download it from OSF
+           if (!exists('osffiles')){
+           osfnode <- '6u7db'
+           osfproject <- osf_retrieve_node(osfnode)
+          osffiles <- osf_ls_files(osfproject,n_max=300)}
+          fid <- which(osffiles$name==paste0('P',600+participant,'.zip'))
+          osf_download(osffiles[fid,],rawdir,progress=TRUE)
+         }
+         
+         # then unzip the tar file
+         unzip(paste0(rawdir,'P',600+participant,'.zip'),exdir=paste0(rawdir))
+         
+         # and delete the tar file to save storage space
+         file.remove(paste0(rawdir,'P',600+participant,'.zip'))
+       }
+      }
+      
+      d <- dir(paste0(rawdir,'P',600+participant),full.names=TRUE)
 
     tic()
   
@@ -361,11 +391,11 @@ if (processdata > 2){
       
       
     repcounterP <- (1:60)*0
-    d <- dir(paste0(rawdir,participant),pattern='*annotations.csv',full.names=TRUE)
+    afiles <- dir(path=paste0(rawdir,'P',600+participant),pattern='*annotations.csv',full.names=TRUE)
 
-    for (block in 1:length(d)){
+    for (block in 1:length(afiles)){
         tic()
-        adata <- read.csv(paste0(rawdir,participant,'/',paste0(participant,'_S',block),'_annotations.csv'))
+        adata <- read.csv(paste0(rawdir,'P',600+participant,'/',paste0('P',600+participant,'_S',block),'_annotations.csv'))
         
         trialtimes <- NULL
         trialtypes <- NULL
@@ -383,7 +413,7 @@ if (processdata > 2){
         inclist <- inclist[which(!is.na(inclist))]
         trialtypes[inclist] <- trialtypes[inclist] + 5
         
-        pdata <- read.csv(paste(rawdir,participant,'/',paste0(participant,'_S',block),'_pupil_positions.csv',sep=''))
+        pdata <- read.csv(paste(rawdir,'P',600+participant,'/',paste0('P',600+participant,'_S',block),'_pupil_positions.csv',sep=''))
         pdata2 <- pdata[,c(1,3,4,14)]
         pdata2 <- pdata2[which(pdata2[,3]>0.2),]
         
@@ -462,16 +492,32 @@ if (processdata > 2){
   
     meanwavesP <- apply(pupilwaveforms[,,c(15,20),],4,mean,na.rm=TRUE)
     meanspectraP <- apply(pupilspectra[,,c(15,20),],4,mean,na.rm=TRUE)
-    save(file=paste(datadir,participant,'_summaryLum.RData',sep=''),list=c('cleanmeansP','cleanmasksP','cleanmeansP2','cleanmasksP2','meanspectraP','meanwavesP'))
+    save(file=paste(datadir,'P',600+participant,'_summaryLum.RData',sep=''),list=c('cleanmeansP','cleanmasksP','cleanmeansP2','cleanmasksP2','meanspectraP','meanwavesP'))
+    
+    if (cleanupraw==1){file.remove(d)} # delete raw data files to save space
   }
   
-  }
+  }}
 ```
 
 ```{r luminance group, include=FALSE, results='hide'}
 
 # load in individual participant data and average, save group data
 if (processdata > 1){
+  for (participant in 1:24){
+         # if the summary file of this participant's data doesn't exist
+         if (!file.exists(paste0(datadir,'P',600+participant,'summaryLum.RData'))){
+           # download it from OSF
+           if (!exists('osffilesP')){
+           osfnode <- '9ebtd'
+           osfproject <- osf_retrieve_node(osfnode)
+          osffilesP <- osf_ls_files(osfproject,n_max=300)}
+          fid <- which(osffilesP$name==paste0('P',600+participant,'summaryLum.RData'))
+          osf_download(osffilesP[fid,],datadir,progress=TRUE)
+         }
+}
+  
+  
   
   d <- dir(datadir,pattern='summaryLum.RData', full.names = TRUE)
   
@@ -590,9 +636,21 @@ if (processdata > 1){
 
 ```{r luminance plot, include=FALSE, results='hide'}
 
+# generate plot showing the group pupillometry data for the luminance experiment
+
+         if (!file.exists(paste0(datadir,'AveragedataLum.RData'))){
+           # download it from OSF
+           if (!exists('osffilesP')){
+           osfnode <- '9ebtd'
+           osfproject <- osf_retrieve_node(osfnode)
+          osffilesP <- osf_ls_files(osfproject,n_max=300)}
+          fid <- which(osffilesP$name=='AveragedataLum.RData')
+          osf_download(osffilesP[fid,],datadir,progress=TRUE)
+         }
+
 load(file=paste0(datadir,'AveragedataLum.RData'))
 
-# generate plot showing the group pupillometry data for the luminance condition
+
 if (processdata > 0){
   
 allPLumratios <- abs(cleanmeansP[2,])/abs(cleanmeansP[1,])
@@ -1016,11 +1074,42 @@ Finally, we calculated the binocular to monocular ratio at the first and second 
 
 ```{r melanopsin individual, include=FALSE, results='hide'}
 
-# (download and) analyse individual participant data for the melanopsin condition
+# (download and) analyse individual participant data for the melanopsin experiment
 if (processdata > 2){
 
-  for(p in 501:512){
-    participant <- paste0('P',p)
+  for(participant in 1:24){
+    
+    # only download and process data if this has not been done already for this participant
+    if (!file.exists(paste0(datadir,'P',500+participant,'summary.RData'))){   
+
+      # if there is no directory for this participant's data
+      if (!file.exists(paste0(rawdir,'P',500+participant))){
+        dir.create(paste0(rawdir,'P',500+participant))
+        
+       d <- dir(paste0(rawdir,'P',500+participant))
+       
+       if (length(d)==0){
+         
+         # if the tar file of this participant's data doesn't exist
+         if (!file.exists(paste0(rawdir,'P',500+participant,'.zip'))){
+           # download it from OSF
+           if (!exists('osffiles')){
+           osfnode <- 'xkgd9'
+           osfproject <- osf_retrieve_node(osfnode)
+          osffiles <- osf_ls_files(osfproject,n_max=300)}
+          fid <- which(osffiles$name==paste0('P',500+participant,'.zip'))
+          osf_download(osffiles[fid,],rawdir,progress=TRUE)
+         }
+         
+         # then unzip the tar file
+         unzip(paste0(rawdir,'P',500+participant,'.zip'),exdir=paste0(rawdir))
+         
+         # and delete the tar file to save storage space
+         file.remove(paste0(rawdir,'P',500+participant,'.zip'))
+       }
+      }
+      
+      d <- dir(paste0(rawdir,'P',500+participant),full.names=TRUE)
 
     tic()
   
@@ -1039,11 +1128,11 @@ if (processdata > 2){
       
       
     repcounterP <- (1:60)*0
-    d <- dir(paste0(rawdir,participant),pattern='*annotations.csv',full.names=TRUE)
+    afiles <- dir(path=paste0(rawdir,'P',500+participant),pattern='*annotations.csv',full.names=TRUE)
 
-    for (block in 1:length(d)){
+    for (block in 1:length(afiles)){
         tic()
-        adata <- read.csv(paste0(rawdir,participant,'/',paste0(participant,'_S',block),'_annotations.csv'))
+        adata <- read.csv(paste0(rawdir,'P',500+participant,'/',paste0('P',500+participant,'_S',block),'_annotations.csv'))
         
         trialtimes <- NULL
         trialtypes <- NULL
@@ -1061,7 +1150,7 @@ if (processdata > 2){
         inclist <- inclist[which(!is.na(inclist))]
         trialtypes[inclist] <- trialtypes[inclist] + 5
         
-        pdata <- read.csv(paste(rawdir,participant,'/',paste0(participant,'_S',block),'_pupil_positions.csv',sep=''))
+        pdata <- read.csv(paste(rawdir,'P',500+participant,'/',paste0('P',500+participant,'_S',block),'_pupil_positions.csv',sep=''))
         pdata2 <- pdata[,c(1,3,4,14)]
         pdata2 <- pdata2[which(pdata2[,3]>0.2),]
         
@@ -1140,15 +1229,29 @@ if (processdata > 2){
   
     meanwavesP <- apply(pupilwaveforms[,,c(15,20),],4,mean,na.rm=TRUE)
     meanspectraP <- apply(pupilspectra[,,c(15,20),],4,mean,na.rm=TRUE)
-    save(file=paste(datadir,participant,'_summaryMel.RData',sep=''),list=c('cleanmeansP','cleanmasksP','cleanmeansP2','cleanmasksP2','meanspectraP','meanwavesP'))
+    save(file=paste(datadir,'P',500+participant,'_summaryMel.RData',sep=''),list=c('cleanmeansP','cleanmasksP','cleanmeansP2','cleanmasksP2','meanspectraP','meanwavesP'))
+    
+    if (cleanupraw==1){file.remove(d)} # delete raw data files to save space
     }
-  }
+  }}
 ```
 
 ```{r melanopsin group, include=FALSE, results='hide'}
 
 # load in individual participant data and average, save group data
 if (processdata > 1){
+  for (participant in 1:24){
+         # if the summary file of this participant's data doesn't exist
+         if (!file.exists(paste0(datadir,'P',500+participant,'summaryMel.RData'))){
+           # download it from OSF
+           if (!exists('osffilesP')){
+           osfnode <- '9ebtd'
+           osfproject <- osf_retrieve_node(osfnode)
+          osffilesP <- osf_ls_files(osfproject,n_max=300)}
+          fid <- which(osffilesP$name==paste0('P',500+participant,'summaryMel.RData'))
+          osf_download(osffilesP[fid,],datadir,progress=TRUE)
+         }
+}
   
   d <- dir(datadir,pattern='summaryMel.RData', full.names = TRUE)
   
@@ -1267,9 +1370,19 @@ if (processdata > 1){
 
 ```{r melanopsin plot, include=FALSE, results='hide'}
 
+# generate plot showing the group pupillometry data for the melanopsin experiment 
+if (!file.exists(paste0(datadir,'AveragedataMel.RData'))){
+           # download it from OSF
+           if (!exists('osffilesP')){
+           osfnode <- '9ebtd'
+           osfproject <- osf_retrieve_node(osfnode)
+          osffilesP <- osf_ls_files(osfproject,n_max=300)}
+          fid <- which(osffilesP$name=='AveragedataMel.RData')
+          osf_download(osffilesP[fid,],datadir,progress=TRUE)
+         }
+
 load(file=paste0(datadir,'AveragedataMel.RData'))
 
-# generate plot showing the group pupillometry data for the melanopsin experiment
 if (processdata > 0){
   
 allPMelratios <- abs(cleanmeansP[2,])/abs(cleanmeansP[1,])
@@ -1686,11 +1799,42 @@ Finally, we calculated the binocular to monocular ratio at the first and second 
 
 ```{r L-M individual, include=FALSE, results='hide'}
 
-# (download and) analyse individual participant data for the L-M condition
+# (download and) analyse individual participant data for the L-M experiment
 if (processdata > 2){
 
-  for(p in 701:712){
-    participant <- paste0('P',p)
+  for(participant in 1:24){
+    
+    # only download and process data if this has not been done already for this participant
+    if (!file.exists(paste0(datadir,'P',700+participant,'summary.RData'))){   
+
+      # if there is no directory for this participant's data
+      if (!file.exists(paste0(rawdir,'P',700+participant))){
+        dir.create(paste0(rawdir,'P',700+participant))
+        
+       d <- dir(paste0(rawdir,'P',700+participant))
+       
+       if (length(d)==0){
+         
+         # if the tar file of this participant's data doesn't exist
+         if (!file.exists(paste0(rawdir,'P',700+participant,'.zip'))){
+           # download it from OSF
+           if (!exists('osffiles')){
+           osfnode <- 'pexyk'
+           osfproject <- osf_retrieve_node(osfnode)
+          osffiles <- osf_ls_files(osfproject,n_max=300)}
+          fid <- which(osffiles$name==paste0('P',700+participant,'.zip'))
+          osf_download(osffiles[fid,],rawdir,progress=TRUE)
+         }
+         
+         # then unzip the tar file
+         unzip(paste0(rawdir,'P',700+participant,'.zip'),exdir=paste0(rawdir))
+         
+         # and delete the tar file to save storage space
+         file.remove(paste0(rawdir,'P',700+participant,'.zip'))
+       }
+      }
+      
+      d <- dir(paste0(rawdir,'P',700+participant),full.names=TRUE)
 
     tic()
   
@@ -1709,11 +1853,11 @@ if (processdata > 2){
       
       
     repcounterP <- (1:60)*0
-    d <- dir(paste0(rawdir,participant),pattern='*annotations.csv',full.names=TRUE)
+    afiles <- dir(path=paste0(rawdir,'P',700+participant),pattern='*annotations.csv',full.names=TRUE)
 
-    for (block in 1:length(d)){
+    for (block in 1:length(afiles)){
         tic()
-        adata <- read.csv(paste0(rawdir,participant,'/',paste0(participant,'_S',block),'_annotations.csv'))
+        adata <- read.csv(paste0(rawdir,'P',700+participant,'/',paste0('P',700+participant,'_S',block),'_annotations.csv'))
         
         trialtimes <- NULL
         trialtypes <- NULL
@@ -1731,7 +1875,7 @@ if (processdata > 2){
         inclist <- inclist[which(!is.na(inclist))]
         trialtypes[inclist] <- trialtypes[inclist] + 5
         
-        pdata <- read.csv(paste(rawdir,participant,'/',paste0(participant,'_S',block),'_pupil_positions.csv',sep=''))
+        pdata <- read.csv(paste(rawdir,'P',700+participant,'/',paste0('P',700+participant,'_S',block),'_pupil_positions.csv',sep=''))
         pdata2 <- pdata[,c(1,3,4,14)]
         pdata2 <- pdata2[which(pdata2[,3]>0.2),]
         
@@ -1810,16 +1954,30 @@ if (processdata > 2){
   
     meanwavesP <- apply(pupilwaveforms[,,c(15,20),],4,mean,na.rm=TRUE)
     meanspectraP <- apply(pupilspectra[,,c(15,20),],4,mean,na.rm=TRUE)
-    save(file=paste(datadir,participant,'_summaryLM.RData',sep=''),list=c('cleanmeansP','cleanmasksP','cleanmeansP2','cleanmasksP2','meanspectraP','meanwavesP'))
+    save(file=paste(datadir,'P',700+participant,'_summaryLM.RData',sep=''),list=c('cleanmeansP','cleanmasksP','cleanmeansP2','cleanmasksP2','meanspectraP','meanwavesP'))
+    
+    if (cleanupraw==1){file.remove(d)} # delete raw data files to save space
   }
   
-  }
+  }}
 ```
 
 ```{r L-M group, include=FALSE, results='hide'}
 
 # load in individual participant data and average, save group data
 if (processdata > 1){
+  for (participant in 1:24){
+         # if the summary file of this participant's data doesn't exist
+         if (!file.exists(paste0(datadir,'P',700+participant,'summaryLM.RData'))){
+           # download it from OSF
+           if (!exists('osffilesP')){
+           osfnode <- '9ebtd'
+           osfproject <- osf_retrieve_node(osfnode)
+          osffilesP <- osf_ls_files(osfproject,n_max=300)}
+          fid <- which(osffilesP$name==paste0('P',700+participant,'summaryLM.RData'))
+          osf_download(osffilesP[fid,],datadir,progress=TRUE)
+         }
+}
   
   d <- dir(datadir,pattern='summaryLM.RData', full.names = TRUE)
   
@@ -1938,9 +2096,20 @@ if (processdata > 1){
 
 ```{r L-M plot, include=FALSE, results='hide'}
 
+# generate plot showing the group pupillometry data for the L-M experiment
+if (!file.exists(paste0(datadir,'AveragedataLM.RData'))){
+           # download it from OSF
+           if (!exists('osffilesP')){
+           osfnode <- '9ebtd'
+           osfproject <- osf_retrieve_node(osfnode)
+          osffilesP <- osf_ls_files(osfproject,n_max=300)}
+          fid <- which(osffilesP$name=='AveragedataLM.RData')
+          osf_download(osffilesP[fid,],datadir,progress=TRUE)
+         }
+
 load(file=paste0(datadir,'AveragedataLM.RData'))
 
-# generate plot showing the group pupillometry data for the L-M experiment
+
 if (processdata > 0){
   
 allPLMratios <- abs(cleanmeansP[2,])/abs(cleanmeansP[1,])
@@ -2360,8 +2529,39 @@ Finally, we calculated the binocular to monocular ratio at the first and second 
 # (download and) analyse individual participant data for the S condition
 if (processdata > 2){
 
-  for(p in 301:312){
-    participant <- paste0('P',p)
+  for(participant in 1:24){
+    
+    # only download and process data if this has not been done already for this participant
+    if (!file.exists(paste0(datadir,'P',300+participant,'summary.RData'))){   
+
+      # if there is no directory for this participant's data
+      if (!file.exists(paste0(rawdir,'P',300+participant))){
+        dir.create(paste0(rawdir,'P',300+participant))
+        
+       d <- dir(paste0(rawdir,'P',300+participant))
+       
+       if (length(d)==0){
+         
+         # if the tar file of this participant's data doesn't exist
+         if (!file.exists(paste0(rawdir,'P',300+participant,'.zip'))){
+           # download it from OSF
+           if (!exists('osffiles')){
+           osfnode <- 'k9mdq'
+           osfproject <- osf_retrieve_node(osfnode)
+          osffiles <- osf_ls_files(osfproject,n_max=300)}
+          fid <- which(osffiles$name==paste0('P',300+participant,'.zip'))
+          osf_download(osffiles[fid,],rawdir,progress=TRUE)
+         }
+         
+         # then unzip the tar file
+         unzip(paste0(rawdir,'P',300+participant,'.zip'),exdir=paste0(rawdir))
+         
+         # and delete the tar file to save storage space
+         file.remove(paste0(rawdir,'P',300+participant,'.zip'))
+       }
+      }
+      
+      d <- dir(paste0(rawdir,'P',300+participant),full.names=TRUE)
 
     tic()
   
@@ -2380,11 +2580,11 @@ if (processdata > 2){
       
       
     repcounterP <- (1:60)*0
-    d <- dir(paste0(rawdir,participant),pattern='*annotations.csv',full.names=TRUE)
+    afiles <- dir(path=paste0(rawdir,'P',300+participant),pattern='*annotations.csv',full.names=TRUE)
 
-    for (block in 1:length(d)){
+    for (block in 1:length(afiles)){
         tic()
-        adata <- read.csv(paste0(rawdir,participant,'/',paste0(participant,'_S',block),'_annotations.csv'))
+        adata <- read.csv(paste0(rawdir,'P',300+participant,'/',paste0('P',300+participant,'_S',block),'_annotations.csv'))
         
         trialtimes <- NULL
         trialtypes <- NULL
@@ -2402,7 +2602,7 @@ if (processdata > 2){
         inclist <- inclist[which(!is.na(inclist))]
         trialtypes[inclist] <- trialtypes[inclist] + 5
         
-        pdata <- read.csv(paste(rawdir,participant,'/',paste0(participant,'_S',block),'_pupil_positions.csv',sep=''))
+        pdata <- read.csv(paste(rawdir,'P',300+participant,'/',paste0('P',300+participant,'_S',block),'_pupil_positions.csv',sep=''))
         pdata2 <- pdata[,c(1,3,4,14)]
         pdata2 <- pdata2[which(pdata2[,3]>0.2),]
         
@@ -2481,16 +2681,30 @@ if (processdata > 2){
   
     meanwavesP <- apply(pupilwaveforms[,,c(15,20),],4,mean,na.rm=TRUE)
     meanspectraP <- apply(pupilspectra[,,c(15,20),],4,mean,na.rm=TRUE)
-    save(file=paste(datadir,participant,'_summaryS.RData',sep=''),list=c('cleanmeansP','cleanmasksP','cleanmeansP2','cleanmasksP2','meanspectraP','meanwavesP'))
+    save(file=paste(datadir,'P',300+participant,'_summaryS.RData',sep=''),list=c('cleanmeansP','cleanmasksP','cleanmeansP2','cleanmasksP2','meanspectraP','meanwavesP'))
+    
+    if (cleanupraw==1){file.remove(d)} # delete raw data files to save space
   }
   
-  }
+  }}
 ```
 
 ```{r S group, include=FALSE, results='hide'}
 
 # load in individual participant data and average, save group data
 if (processdata > 1){
+  for (participant in 1:24){
+         # if the summary file of this participant's data doesn't exist
+         if (!file.exists(paste0(datadir,'P',300+participant,'summaryS.RData'))){
+           # download it from OSF
+           if (!exists('osffilesP')){
+           osfnode <- '9ebtd'
+           osfproject <- osf_retrieve_node(osfnode)
+          osffilesP <- osf_ls_files(osfproject,n_max=300)}
+          fid <- which(osffilesP$name==paste0('P',300+participant,'summaryS.RData'))
+          osf_download(osffilesP[fid,],datadir,progress=TRUE)
+         }
+}
   
   d <- dir(datadir,pattern='summaryS.RData', full.names = TRUE)
   
@@ -2609,9 +2823,19 @@ if (processdata > 1){
 
 ```{r S plot, include=FALSE, results='hide'}
 
+# generate plot showing the group pupillometry data for the S experiment
+if (!file.exists(paste0(datadir,'AveragedataS.RData'))){
+           # download it from OSF
+           if (!exists('osffilesP')){
+           osfnode <- '9ebtd'
+           osfproject <- osf_retrieve_node(osfnode)
+          osffilesP <- osf_ls_files(osfproject,n_max=300)}
+          fid <- which(osffilesP$name=='AveragedataS.RData')
+          osf_download(osffilesP[fid,],datadir,progress=TRUE)
+         }
+
 load(file=paste0(datadir,'AveragedataS.RData'))
 
-# generate plot showing the group pupillometry data for the S experiment
 if (processdata > 0){
   
 allPSratios <- abs(cleanmeansP[2,])/abs(cleanmeansP[1,])
