@@ -365,7 +365,7 @@ if (processdata > 2){
          }
          
          # then unzip the tar file
-         unzip(paste0(rawdir,'P',600+participant,'.zip'),exdir=paste0(rawdir))
+         unzip(paste0(rawdir,'P',600+participant,'.zip'),exdir=paste0(rawdir,'P',600+participant))
          
          # and delete the tar file to save storage space
          file.remove(paste0(rawdir,'P',600+participant,'.zip'))
@@ -1102,7 +1102,7 @@ if (processdata > 2){
          }
          
          # then unzip the tar file
-         unzip(paste0(rawdir,'P',500+participant,'.zip'),exdir=paste0(rawdir))
+         unzip(paste0(rawdir,'P',500+participant,'.zip'),exdir=paste0(rawdir,'P',500+participant))
          
          # and delete the tar file to save storage space
          file.remove(paste0(rawdir,'P',500+participant,'.zip'))
@@ -1827,7 +1827,7 @@ if (processdata > 2){
          }
          
          # then unzip the tar file
-         unzip(paste0(rawdir,'P',700+participant,'.zip'),exdir=paste0(rawdir))
+         unzip(paste0(rawdir,'P',700+participant,'.zip'),exdir=paste0(rawdir,'P',700+participant))
          
          # and delete the tar file to save storage space
          file.remove(paste0(rawdir,'P',700+participant,'.zip'))
@@ -2554,7 +2554,7 @@ if (processdata > 2){
          }
          
          # then unzip the tar file
-         unzip(paste0(rawdir,'P',300+participant,'.zip'),exdir=paste0(rawdir))
+         unzip(paste0(rawdir,'P',300+participant,'.zip'),exdir=paste0(rawdir,'P',300+participant))
          
          # and delete the tar file to save storage space
          file.remove(paste0(rawdir,'P',300+participant,'.zip'))
