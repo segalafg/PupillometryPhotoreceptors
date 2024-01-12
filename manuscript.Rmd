@@ -506,13 +506,13 @@ if (processdata > 2){
 if (processdata > 1){
   for (participant in 1:24){
          # if the summary file of this participant's data doesn't exist
-         if (!file.exists(paste0(datadir,'P',600+participant,'summaryLum.RData'))){
+         if (!file.exists(paste0(datadir,'P',600+participant,'_summaryLum.RData'))){
            # download it from OSF
            if (!exists('osffilesP')){
            osfnode <- '9ebtd'
            osfproject <- osf_retrieve_node(osfnode)
           osffilesP <- osf_ls_files(osfproject,n_max=300)}
-          fid <- which(osffilesP$name==paste0('P',600+participant,'summaryLum.RData'))
+          fid <- which(osffilesP$name==paste0('P',600+participant,'_summaryLum.RData'))
           osf_download(osffilesP[fid,],datadir,progress=TRUE)
          }
 }
@@ -1242,13 +1242,13 @@ if (processdata > 2){
 if (processdata > 1){
   for (participant in 1:24){
          # if the summary file of this participant's data doesn't exist
-         if (!file.exists(paste0(datadir,'P',500+participant,'summaryMel.RData'))){
+         if (!file.exists(paste0(datadir,'P',500+participant,'_summaryMel.RData'))){
            # download it from OSF
            if (!exists('osffilesP')){
            osfnode <- '9ebtd'
            osfproject <- osf_retrieve_node(osfnode)
           osffilesP <- osf_ls_files(osfproject,n_max=300)}
-          fid <- which(osffilesP$name==paste0('P',500+participant,'summaryMel.RData'))
+          fid <- which(osffilesP$name==paste0('P',500+participant,'_summaryMel.RData'))
           osf_download(osffilesP[fid,],datadir,progress=TRUE)
          }
 }
@@ -1968,13 +1968,13 @@ if (processdata > 2){
 if (processdata > 1){
   for (participant in 1:24){
          # if the summary file of this participant's data doesn't exist
-         if (!file.exists(paste0(datadir,'P',700+participant,'summaryLM.RData'))){
+         if (!file.exists(paste0(datadir,'P',700+participant,'_summaryLM.RData'))){
            # download it from OSF
            if (!exists('osffilesP')){
            osfnode <- '9ebtd'
            osfproject <- osf_retrieve_node(osfnode)
           osffilesP <- osf_ls_files(osfproject,n_max=300)}
-          fid <- which(osffilesP$name==paste0('P',700+participant,'summaryLM.RData'))
+          fid <- which(osffilesP$name==paste0('P',700+participant,'_summaryLM.RData'))
           osf_download(osffilesP[fid,],datadir,progress=TRUE)
          }
 }
@@ -2695,13 +2695,13 @@ if (processdata > 2){
 if (processdata > 1){
   for (participant in 1:24){
          # if the summary file of this participant's data doesn't exist
-         if (!file.exists(paste0(datadir,'P',300+participant,'summaryS.RData'))){
+         if (!file.exists(paste0(datadir,'P',300+participant,'_summaryS.RData'))){
            # download it from OSF
            if (!exists('osffilesP')){
            osfnode <- '9ebtd'
            osfproject <- osf_retrieve_node(osfnode)
           osffilesP <- osf_ls_files(osfproject,n_max=300)}
-          fid <- which(osffilesP$name==paste0('P',300+participant,'summaryS.RData'))
+          fid <- which(osffilesP$name==paste0('P',300+participant,'_summaryS.RData'))
           osf_download(osffilesP[fid,],datadir,progress=TRUE)
          }
 }
