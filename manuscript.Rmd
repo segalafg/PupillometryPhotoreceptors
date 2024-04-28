@@ -18,7 +18,7 @@ header-includes:
 
 ```{r setup, include=FALSE}
 
-processdata <- 1  # this flag determines the amount of processing, with 4 levels:
+processdata <- 3  # this flag determines the amount of processing, with 4 levels:
 # 0 - do no processing, generate the pdf using existing versions of all figures
 # 1 - generate figures using the processed group data
 # 2 - average data across participants, do bootstrapping
@@ -968,337 +968,6 @@ modrespsLM2 <- getmodresps(params)
 params <- c(pupilRmaxS2,pupilPS2,pupilZS2,pupilWS2,pupilKS2,pupilQS2)
 modrespsS2 <- getmodresps(params)
 
-if (processdata > 0){
-
-pdf(paste(figdir,"modelfigurechap4.pdf",sep=''), bg="transparent", height = 10, width = 25)
-
-par(mfrow=c(2,5))
-
-load(file=paste0(datadir,'AveragedataLum.RData'))
-
-contrastsfinedB <- 2:40
-
-params <- c(pupilRmaxLum,pupilPLum,pupilZLum,pupilWLum,pupilKLum,pupilQLum)
-modresps <- getmodresps(params)
-
-plotlims <- c(15,40,0,1)
-ticklocsx <- contrastsdB    # locations of tick marks on x axis
-ticklocsy <- seq(0,1,0.2)
-ticklabelsx <-c(6,12,24,48,96)        # set labels for x ticks
-ticklabelsy <- ticklocsy
-
-par(pty="s")  # make axis square
-plot(x=NULL,y=NULL,axes=FALSE, ann=FALSE, xlim=plotlims[1:2], ylim=plotlims[3:4])   
-axis(1, at=ticklocsx, tck=0.01, lab=F, lwd=2)     # plot tick marks (no labels)
-axis(2, at=ticklocsy, tck=0.01, lab=F, lwd=2)
-mtext(text = ticklabelsx, side = 1, at=ticklocsx, line=0.2)     # add the tick labels
-mtext(text = ticklabelsy, side = 2, at=ticklocsy, line=0.2, las=1) 
-title(xlab="Target contrast (%)", col.lab=rgb(0,0,0), line=1.2, cex.lab=1.5)   
-title(ylab="Relative amplitude at 0.5Hz", col.lab=rgb(0,0,0), line=1.8, cex.lab=1.5)
-title(main='Luminance 1F',cex.main=2)
-
-for (cond in 1:3){
-  lines(contrastsfinedB,modresps[cond,], col=colpal[cond], lwd=3, cex=0.5)
-  points(contrastsdB,abs(cleanmeansP[cond,])/abs(cleanmeansP[2,5]), pch = 20+cond, col='black', bg=colpal[cond], cex=1.6, lwd=3)   # draw the data points themselves
-}  
-  lines(contrastsfinedB,modresps[4,], col=colpal[6], lwd=3, cex=0.5)
-  points(contrastsdB,abs(cleanmeansP[6,])/abs(cleanmeansP[2,5]), pch = 25, col='black', bg=colpal[6], cex=1.6, lwd=3)   # draw the data points themselves
-
-legend(22,1,c('Monocular','Binocular','Dichoptic','Dichoptic cross'),pch=c(21:23,25),pt.bg=colpal[c(1:3,6)],pt.lwd=3,cex=1.5,pt.cex=1.6,box.lwd=2)
-text(17,0.95,'(a)',adj=0.5,cex=2.5)
-
-
-load(file=paste0(datadir,'AveragedataMel.RData'))
-
-params <- c(pupilRmaxMel,pupilPMel,pupilZMel,pupilWMel,pupilKMel,pupilQMel)
-modresps <- getmodresps(params)
-
-plotlims <- c(15,40,0,1)
-ticklocsx <- contrastsdB    # locations of tick marks on x axis
-ticklocsy <- seq(0,1,0.2)
-ticklabelsx <-c(6,12,24,48,96)        # set labels for x ticks
-ticklabelsy <- ticklocsy
-
-par(pty="s")  # make axis square
-plot(x=NULL,y=NULL,axes=FALSE, ann=FALSE, xlim=plotlims[1:2], ylim=plotlims[3:4])   
-axis(1, at=ticklocsx, tck=0.01, lab=F, lwd=2)     # plot tick marks (no labels)
-axis(2, at=ticklocsy, tck=0.01, lab=F, lwd=2)
-mtext(text = ticklabelsx, side = 1, at=ticklocsx, line=0.2)     # add the tick labels
-mtext(text = ticklabelsy, side = 2, at=ticklocsy, line=0.2, las=1) 
-title(xlab="Target contrast (%)", col.lab=rgb(0,0,0), line=1.2, cex.lab=1.5)   
-title(ylab="Relative amplitude at 0.5Hz", col.lab=rgb(0,0,0), line=1.8, cex.lab=1.5)
-title(main='Melanopsin 1F',cex.main=2)
-
-for (cond in 1:3){
-  lines(contrastsfinedB,modresps[cond,], col=colpal[cond], lwd=3, cex=0.5)
-  points(contrastsdB,abs(cleanmeansP[cond,])/abs(cleanmeansP[2,5]), pch = 20+cond, col='black', bg=colpal[cond], cex=1.6, lwd=3)   # draw the data points themselves
-}  
-  lines(contrastsfinedB,modresps[4,], col=colpal[6], lwd=3, cex=0.5)
-  points(contrastsdB,abs(cleanmeansP[6,])/abs(cleanmeansP[2,5]), pch = 25, col='black', bg=colpal[6], cex=1.6, lwd=3)   # draw the data points themselves
-
-text(17,0.95,'(b)',adj=0.5,cex=2.5)
-
-
-
-load(file=paste0(datadir,'AveragedataLM.RData'))
-
-params <- c(pupilRmaxLM,pupilPLM,pupilZLM,pupilWLM,pupilKLM,pupilQLM)
-modresps <- getmodresps(params)
-
-par(pty="s")  # make axis square
-plot(x=NULL,y=NULL,axes=FALSE, ann=FALSE, xlim=plotlims[1:2], ylim=plotlims[3:4])   
-axis(1, at=ticklocsx, tck=0.01, lab=F, lwd=2)     # plot tick marks (no labels)
-axis(2, at=ticklocsy, tck=0.01, lab=F, lwd=2)
-mtext(text = ticklabelsx, side = 1, at=ticklocsx, line=0.2)     # add the tick labels
-mtext(text = ticklabelsy, side = 2, at=ticklocsy, line=0.2, las=1) 
-title(xlab="Target contrast (%)", col.lab=rgb(0,0,0), line=1.2, cex.lab=1.5)   
-title(ylab="Relative amplitude at 0.5Hz", col.lab=rgb(0,0,0), line=1.8, cex.lab=1.5)
-title(main='L-M cones 1F',cex.main=2)
-
-for (cond in 1:3){
-  lines(contrastsfinedB,modresps[cond,], col=colpal[cond], lwd=3, cex=0.5)
-  points(contrastsdB,abs(cleanmeansP[cond,])/abs(cleanmeansP[2,5]), pch = 20+cond, col='black', bg=colpal[cond], cex=1.6, lwd=3)   # draw the data points themselves
-}  
-  lines(contrastsfinedB,modresps[4,], col=colpal[6], lwd=3, cex=0.5)
-  points(contrastsdB,abs(cleanmeansP[6,])/abs(cleanmeansP[2,5]), pch = 25, col='black', bg=colpal[6], cex=1.6, lwd=3)   # draw the data points themselves
-
-text(17,0.95,'(c)',adj=0.5,cex=2.5)
-
-
-load(file=paste0(datadir,'AveragedataS.RData'))
-
-params <- c(pupilRmaxS,pupilPS,pupilZS,pupilWS,pupilKS,pupilQS)
-modresps <- getmodresps(params)
-
-par(pty="s")  # make axis square
-plot(x=NULL,y=NULL,axes=FALSE, ann=FALSE, xlim=plotlims[1:2], ylim=plotlims[3:4])   
-axis(1, at=ticklocsx, tck=0.01, lab=F, lwd=2)     # plot tick marks (no labels)
-axis(2, at=ticklocsy, tck=0.01, lab=F, lwd=2)
-mtext(text = ticklabelsx, side = 1, at=ticklocsx, line=0.2)     # add the tick labels
-mtext(text = ticklabelsy, side = 2, at=ticklocsy, line=0.2, las=1) 
-title(xlab="Target contrast (%)", col.lab=rgb(0,0,0), line=1.2, cex.lab=1.5)   
-title(ylab="Relative amplitude at 0.5Hz", col.lab=rgb(0,0,0), line=1.8, cex.lab=1.5)
-title(main='S cones 1F',cex.main=2)
-
-for (cond in 1:3){
-  lines(contrastsfinedB,modresps[cond,], col=colpal[cond], lwd=3, cex=0.5)
-  points(contrastsdB,abs(cleanmeansP[cond,])/abs(cleanmeansP[2,5]), pch = 20+cond, col='black', bg=colpal[cond], cex=1.6, lwd=3)   # draw the data points themselves
-}  
-  lines(contrastsfinedB,modresps[4,], col=colpal[6], lwd=3, cex=0.5)
-  points(contrastsdB,abs(cleanmeansP[6,])/abs(cleanmeansP[2,5]), pch = 25, col='black', bg=colpal[6], cex=1.6, lwd=3)   # draw the data points themselves
-
-text(17,0.95,'(d)',adj=0.5,cex=2.5)
-
-
-# pdf(paste(figdir,"posteriors1F.pdf",sep=''), bg="transparent", height = 5.5, width = 5.5)
-
-plotlims <- c(-24,12,0,0.6) 
-ticklocsx <- seq(-24,12,12)    
-ticklocsy <- seq(0,0.6,0.1)    
-ticklabelsx <- c('1/16','1/4','1','4')        
-ticklabelsy <- ticklocsy    # set labels for y ticks
-
-par(pty="s")  # make axis square
-plot(x=NULL,y=NULL,axes=FALSE, ann=FALSE, xlim=plotlims[1:2], ylim=plotlims[3:4])   # create an empty axis of the correct dimensions
-axis(1, at=ticklocsx, tck=0.01, lab=F, lwd=2)     
-axis(2, at=ticklocsy, tck=0.01, lab=F, lwd=2)
-mtext(text = ticklabelsx, side = 1, at=ticklocsx, line=0.2)    
-mtext(text = ticklabelsy, side = 2, at=ticklocsy, line=0.2, las=1)   
-
-title(xlab="w", col.lab=rgb(0,0,0), line=1.2, cex.lab=1.5)    
-title(ylab="Probability", col.lab=rgb(0,0,0), line=1.8, cex.lab=1.5)
-title(main='Suppression 1F',cex.main=2)
-
-a <- density(20*log10(pupilweightpopLum),from=-48,to=12)   
-polygon(c(-48,a$x,12), c(0,a$y,0), col=addalpha(colpalmod[1],0.5),border=NA) 
-
-a <- density(20*log10(pupilweightpopMel),from=-48,to=12)   
-polygon(c(-48,a$x,12), c(0,a$y,0), col=addalpha(colpalmod[2],0.5),border=NA) 
-
-a<- density(20*log10(pupilweightpopLM),from=-48,to=12)   
-polygon(c(-48,a$x,12), c(0,a$y,0), col=addalpha(colpalmod[3],0.5),border=NA) 
-
-a <- density(20*log10(pupilweightpopS),from=-48,to=12)   
-polygon(c(-48,a$x,12), c(0,a$y,0), col=addalpha(colpalmod[4],0.5),border=NA) 
-
-prior <- dnorm(10^((-48:12)/20),1,0.5)
-prior <- 0.5*prior/max(prior)
-lines(-48:12,prior)
-
-lines(20*log10(c(mean(pupilWLum),mean(pupilWLum))),c(0,0.6),lwd=3,col=colpalmod[1])
-lines(20*log10(c(mean(pupilWMel),mean(pupilWMel))),c(0,0.6),lwd=3,col=colpalmod[2])
-lines(20*log10(c(mean(pupilWLM),mean(pupilWLM))),c(0,0.6),lwd=3,col=colpalmod[3])
-lines(20*log10(c(mean(pupilWS),mean(pupilWS))),c(0,0.6),lwd=3,col=colpalmod[4])
-
-legend(-24,0.6,c('Prior','Lum 1F', 'Mel 1F', 'LM 1F', 'S 1F'),col=c('black',colpalmod[1:4]),lwd=c(1,3,3,3,3),lty=1, cex=1.5, box.lwd=2, bg='white')
-
-text(10,0.58,'(e)',adj=0.5,cex=2.5)
-
-# dev.off()
-# 
-# pdf(paste(figdir,"posteriors2F.pdf",sep=''), bg="transparent", height = 5.5, width = 5.5)
-
-load(file=paste0(datadir,'AveragedataLum.RData'))
-
-contrastsfinedB <- 2:40
-
-params <- c(pupilRmaxLum2,pupilPLum2,pupilZLum2,pupilWLum2,pupilKLum2,pupilQLum2)
-modresps <- getmodresps(params)
-
-plotlims <- c(15,40,0,1)
-ticklocsx <- contrastsdB    # locations of tick marks on x axis
-ticklocsy <- seq(0,1,0.2)
-ticklabelsx <-c(6,12,24,48,96)        # set labels for x ticks
-ticklabelsy <- ticklocsy
-
-par(pty="s")  # make axis square
-plot(x=NULL,y=NULL,axes=FALSE, ann=FALSE, xlim=plotlims[1:2], ylim=plotlims[3:4])   
-axis(1, at=ticklocsx, tck=0.01, lab=F, lwd=2)     # plot tick marks (no labels)
-axis(2, at=ticklocsy, tck=0.01, lab=F, lwd=2)
-mtext(text = ticklabelsx, side = 1, at=ticklocsx, line=0.2)     # add the tick labels
-mtext(text = ticklabelsy, side = 2, at=ticklocsy, line=0.2, las=1) 
-title(xlab="Target contrast (%)", col.lab=rgb(0,0,0), line=1.2, cex.lab=1.5)   
-title(ylab="Relative amplitude at 1Hz", col.lab=rgb(0,0,0), line=1.8, cex.lab=1.5)
-title(main='Luminance 2F',cex.main=2)
-
-for (cond in 1:3){
-  lines(contrastsfinedB,modresps[cond,], col=colpal[cond], lwd=3, cex=0.5)
-  points(contrastsdB,abs(cleanmeansP2[cond,])/abs(cleanmeansP2[2,5]), pch = 20+cond, col='black', bg=colpal[cond], cex=1.6, lwd=3)   # draw the data points themselves
-}  
-  lines(contrastsfinedB,modresps[4,], col=colpal[6], lwd=3, cex=0.5)
-  points(contrastsdB,abs(cleanmeansP2[6,])/abs(cleanmeansP2[2,5]), pch = 25, col='black', bg=colpal[6], cex=1.6, lwd=3)   # draw the data points themselves
-
-text(17,0.95,'(f)',adj=0.5,cex=2.5)
-
-
-load(file=paste0(datadir,'AveragedataMel.RData'))
-
-params <- c(pupilRmaxMel2,pupilPMel2,pupilZMel2,pupilWMel2,pupilKMel2,pupilQMel2)
-modresps <- getmodresps(params)
-
-plotlims <- c(15,40,0,1)
-ticklocsx <- contrastsdB    # locations of tick marks on x axis
-ticklocsy <- seq(0,1,0.2)
-ticklabelsx <-c(6,12,24,48,96)        # set labels for x ticks
-ticklabelsy <- ticklocsy
-
-par(pty="s")  # make axis square
-plot(x=NULL,y=NULL,axes=FALSE, ann=FALSE, xlim=plotlims[1:2], ylim=plotlims[3:4])   
-axis(1, at=ticklocsx, tck=0.01, lab=F, lwd=2)     # plot tick marks (no labels)
-axis(2, at=ticklocsy, tck=0.01, lab=F, lwd=2)
-mtext(text = ticklabelsx, side = 1, at=ticklocsx, line=0.2)     # add the tick labels
-mtext(text = ticklabelsy, side = 2, at=ticklocsy, line=0.2, las=1) 
-title(xlab="Target contrast (%)", col.lab=rgb(0,0,0), line=1.2, cex.lab=1.5)   
-title(ylab="Relative amplitude at 1Hz", col.lab=rgb(0,0,0), line=1.8, cex.lab=1.5)
-title(main='Melanopsin 2F',cex.main=2)
-
-for (cond in 1:3){
-  lines(contrastsfinedB,modresps[cond,], col=colpal[cond], lwd=3, cex=0.5)
-  points(contrastsdB,abs(cleanmeansP2[cond,])/abs(cleanmeansP2[2,5]), pch = 20+cond, col='black', bg=colpal[cond], cex=1.6, lwd=3)   # draw the data points themselves
-}  
-  lines(contrastsfinedB,modresps[4,], col=colpal[6], lwd=3, cex=0.5)
-  points(contrastsdB,abs(cleanmeansP2[6,])/abs(cleanmeansP2[2,5]), pch = 25, col='black', bg=colpal[6], cex=1.6, lwd=3)   # draw the data points themselves
-
-text(17,0.95,'(g)',adj=0.5,cex=2.5)
-
-
-
-load(file=paste0(datadir,'AveragedataLM.RData'))
-
-params <- c(pupilRmaxLM2,pupilPLM2,pupilZLM2,pupilWLM2,pupilKLM2,pupilQLM2)
-modresps <- getmodresps(params)
-
-par(pty="s")  # make axis square
-plot(x=NULL,y=NULL,axes=FALSE, ann=FALSE, xlim=plotlims[1:2], ylim=plotlims[3:4])   
-axis(1, at=ticklocsx, tck=0.01, lab=F, lwd=2)     # plot tick marks (no labels)
-axis(2, at=ticklocsy, tck=0.01, lab=F, lwd=2)
-mtext(text = ticklabelsx, side = 1, at=ticklocsx, line=0.2)     # add the tick labels
-mtext(text = ticklabelsy, side = 2, at=ticklocsy, line=0.2, las=1) 
-title(xlab="Target contrast (%)", col.lab=rgb(0,0,0), line=1.2, cex.lab=1.5)   
-title(ylab="Relative amplitude at 1Hz", col.lab=rgb(0,0,0), line=1.8, cex.lab=1.5)
-title(main='L-M cones 2F',cex.main=2)
-
-for (cond in 1:3){
-  lines(contrastsfinedB,modresps[cond,], col=colpal[cond], lwd=3, cex=0.5)
-  points(contrastsdB,abs(cleanmeansP2[cond,])/abs(cleanmeansP2[2,5]), pch = 20+cond, col='black', bg=colpal[cond], cex=1.6, lwd=3)   # draw the data points themselves
-}  
-  lines(contrastsfinedB,modresps[4,], col=colpal[6], lwd=3, cex=0.5)
-  points(contrastsdB,abs(cleanmeansP2[6,])/abs(cleanmeansP2[2,5]), pch = 25, col='black', bg=colpal[6], cex=1.6, lwd=3)   # draw the data points themselves
-
-text(17,0.95,'(h)',adj=0.5,cex=2.5)
-
-
-load(file=paste0(datadir,'AveragedataS.RData'))
-
-params <- c(pupilRmaxS2,pupilPS2,pupilZS2,pupilWS2,pupilKS2,pupilQS2)
-modresps <- getmodresps(params)
-
-par(pty="s")  # make axis square
-plot(x=NULL,y=NULL,axes=FALSE, ann=FALSE, xlim=plotlims[1:2], ylim=plotlims[3:4])   
-axis(1, at=ticklocsx, tck=0.01, lab=F, lwd=2)     # plot tick marks (no labels)
-axis(2, at=ticklocsy, tck=0.01, lab=F, lwd=2)
-mtext(text = ticklabelsx, side = 1, at=ticklocsx, line=0.2)     # add the tick labels
-mtext(text = ticklabelsy, side = 2, at=ticklocsy, line=0.2, las=1) 
-title(xlab="Target contrast (%)", col.lab=rgb(0,0,0), line=1.2, cex.lab=1.5)   
-title(ylab="Relative amplitude at 1Hz", col.lab=rgb(0,0,0), line=1.8, cex.lab=1.5)
-title(main='S cones 2F',cex.main=2)
-
-for (cond in 1:3){
-  lines(contrastsfinedB,modresps[cond,], col=colpal[cond], lwd=3, cex=0.5)
-  points(contrastsdB,abs(cleanmeansP2[cond,])/abs(cleanmeansP2[2,5]), pch = 20+cond, col='black', bg=colpal[cond], cex=1.6, lwd=3)   # draw the data points themselves
-}  
-  lines(contrastsfinedB,modresps[4,], col=colpal[6], lwd=3, cex=0.5)
-  points(contrastsdB,abs(cleanmeansP2[6,])/abs(cleanmeansP2[2,5]), pch = 25, col='black', bg=colpal[6], cex=1.6, lwd=3)   # draw the data points themselves
-
-text(17,0.95,'(i)',adj=0.5,cex=2.5)
-
-
-plotlims <- c(-24,12,0,0.6) 
-ticklocsx <- seq(-24,12,12)    
-ticklocsy <- seq(0,0.6,0.1)    
-ticklabelsx <- c('1/16','1/4','1','4')        
-ticklabelsy <- ticklocsy    # set labels for y ticks
-
-par(pty="s")  # make axis square
-plot(x=NULL,y=NULL,axes=FALSE, ann=FALSE, xlim=plotlims[1:2], ylim=plotlims[3:4])   # create an empty axis of the correct dimensions
-axis(1, at=ticklocsx, tck=0.01, lab=F, lwd=2)     
-axis(2, at=ticklocsy, tck=0.01, lab=F, lwd=2)
-mtext(text = ticklabelsx, side = 1, at=ticklocsx, line=0.2)    
-mtext(text = ticklabelsy, side = 2, at=ticklocsy, line=0.2, las=1)   
- 
-title(xlab="w", col.lab=rgb(0,0,0), line=1.2, cex.lab=1.5)    
-title(ylab="Probability", col.lab=rgb(0,0,0), line=1.8, cex.lab=1.5)
-title(main='Suppression 2F',cex.main=2)
-
-a <- density(20*log10(pupilweightpopLum2),from=-48,to=12)   
-polygon(c(-48,a$x,12), c(0,a$y,0), col=addalpha(colpalmod[1],0.5),border=NA) 
-
-a <- density(20*log10(pupilweightpopMel2),from=-48,to=12)   
-polygon(c(-48,a$x,12), c(0,a$y,0), col=addalpha(colpalmod[2],0.5),border=NA) 
-
-a <- density(20*log10(pupilweightpopLM2),from=-48,to=12)   
-polygon(c(-48,a$x,12), c(0,a$y,0), col=addalpha(colpalmod[3],0.5),border=NA) 
-
-a <- density(20*log10(pupilweightpopS2),from=-48,to=12)   
-polygon(c(-48,a$x,12), c(0,a$y,0), col=addalpha(colpalmod[4],0.5),border=NA) 
-
-prior <- dnorm(10^((-48:12)/20),1,0.5)
-prior <- 0.5*prior/max(prior)
-lines(-48:12,prior)
-
-lines(20*log10(c(mean(pupilWLum2),mean(pupilWLum2))),c(0,0.6),lwd=3,col=colpalmod[1])
-lines(20*log10(c(mean(pupilWMel2),mean(pupilWMel2))),c(0,0.6),lwd=3,col=colpalmod[2])
-lines(20*log10(c(mean(pupilWLM2),mean(pupilWLM2))),c(0,0.6),lwd=3,col=colpalmod[3])
-lines(20*log10(c(mean(pupilWS2),mean(pupilWS2))),c(0,0.6),lwd=3,col=colpalmod[4])
-
-legend(-24,0.6,c('Prior','Lum 2F', 'Mel 2F', 'LM 2F', 'S 2F'),col=c('black',colpalmod[1:4]),lwd=c(1,3,3,3,3),lty=1, cex=1.5, box.lwd=2, bg='white')
-
-text(10,0.58,'(j)',adj=0.5,cex=2.5)
-
-dev.off()
-
-}
-
 ```
 
 ```{r makemethodsfig, include=FALSE, results='hide'}
@@ -1314,8 +983,8 @@ sinewave <- sin(0.5*times * 2*pi)
 sinewave[1:120] <- 0
 sinewave[1560:1680] <- 0
 
-coneab <- read.csv('local/coneabsorptions.csv',header=FALSE)
-spectra <- read.csv('local/spectra.csv',header=FALSE)
+coneab <- read.csv('resources/coneabsorptions.csv',header=FALSE)
+spectra <- read.csv('resources/spectra.csv',header=FALSE)
 
 # calculate delta photoreceptor contrast
 pcontrast <- coneab
@@ -1328,7 +997,7 @@ par(mar=c(1.5,1,0.1,0.1))
     
   plot(x=NULL,y=NULL,axes=FALSE, ann=FALSE, xlim=c(0,1), ylim=c(0,1))  
 
-  schematic <- readTIFF('local/schematic.tiff')
+  schematic <- readTIFF('resources/schematic.tiff')
   aspratio <- 15/12  # this is the aspect ratio of the output pdf
   imwidth <- 0.85
   xstart <- 0
@@ -1339,8 +1008,8 @@ par(mar=c(1.5,1,0.1,0.1))
 
   par(mar=c(3.5,6,1.5,2))
   
-lspec <- read.csv('local/STLAB_1_oo_irrad_spectra.csv',header=FALSE)
-rspec <- read.csv('local/STLAB_2_oo_irrad_spectra.csv',header=FALSE)
+lspec <- read.csv('resources/STLAB_1_oo_irrad_spectra.csv',header=FALSE)
+rspec <- read.csv('resources/STLAB_2_oo_irrad_spectra.csv',header=FALSE)
 
 lall <- matrix(0,nrow=11,ncol=401)
 lall[1,] <- unlist(lspec[1,3:403])
@@ -2154,11 +1823,33 @@ justdich[8,] <- abs(cleanmeansP2[6,])
 allbin <- 20*log10(allbin)
 alldich <- 20*log10(alldich)
 
-plotlims <- c(-24,24,-24,24) 
-ticklocsx <- seq(-24,24,12)    
-ticklocsy <- seq(-24,24,12)      
-ticklabelsx <- c('1/16','1/4','1','4','16')        
-ticklabelsy <- ticklabelsx    # set labels for y ticks
+allfacilitation <- matrix(0,nrow=2,ncol=4)
+allsuppression <- matrix(0,nrow=2,ncol=4)
+
+allfacilitation[1,1] <- mean(modrespsLum[2,]/modrespsLum[1,])
+allsuppression[1,1] <- mean(modrespsLum[1,]/modrespsLum[4,])
+allfacilitation[1,2] <- mean(modrespsLM[2,]/modrespsLM[1,])
+allsuppression[1,2] <- mean(modrespsLM[1,]/modrespsLM[4,])
+allfacilitation[1,3] <- mean(modrespsS[2,]/modrespsS[1,])
+allsuppression[1,3] <- mean(modrespsS[1,]/modrespsS[4,])
+allfacilitation[1,4] <- mean(modrespsMel[2,]/modrespsMel[1,])
+allsuppression[1,4] <- mean(modrespsMel[1,]/modrespsMel[4,])
+
+allfacilitation[2,1] <- mean(modrespsLum2[2,]/modrespsLum2[1,])
+allsuppression[2,1] <- mean(modrespsLum2[1,]/modrespsLum2[4,])
+allfacilitation[2,2] <- mean(modrespsLM2[2,]/modrespsLM2[1,])
+allsuppression[2,2] <- mean(modrespsLM2[1,]/modrespsLM2[4,])
+allfacilitation[2,3] <- mean(modrespsS2[2,]/modrespsS2[1,])
+allsuppression[2,3] <- mean(modrespsS2[1,]/modrespsS2[4,])
+allfacilitation[2,4] <- mean(modrespsMel2[2,]/modrespsMel2[1,])
+allsuppression[2,4] <- mean(modrespsMel2[1,]/modrespsMel2[4,])
+
+
+plotlims <- c(1,2,1,2) 
+ticklocsx <- seq(1,2,0.2)    
+ticklocsy <- seq(1,2,0.2)      
+ticklabelsx <- ticklocsx        
+ticklabelsy <- ticklocsy    # set labels for y ticks
 
 par(pty="s")  # make axis square
 plot(x=NULL,y=NULL,axes=FALSE, ann=FALSE, xlim=plotlims[1:2], ylim=plotlims[3:4])  
@@ -2170,8 +1861,16 @@ mtext(text = ticklabelsy, side = 2, at=ticklocsy, line=0.2, las=1)
 title(xlab="Binocular facilitation", col.lab=rgb(0,0,0), line=1.2, cex.lab=1.5)    
 title(ylab="Dichoptic suppression", col.lab=rgb(0,0,0), line=1.8, cex.lab=1.5)
 
-points(allbin[1:4,5],alldich[1:4,5],pch=21)
 
+points(allfacilitation[1,1],allsuppression[1,1],pch=21,col=stimcolours[1],bg=stimcolours[2],cex=2,lwd=3)
+points(allfacilitation[1,2],allsuppression[1,2],pch=21,col=stimcolours[3],bg=stimcolours[4],cex=2,lwd=3)
+points(allfacilitation[1,3],allsuppression[1,3],pch=21,col=stimcolours[6],bg=stimcolours[5],cex=2,lwd=3)
+points(allfacilitation[1,4],allsuppression[1,4],pch=21,col=stimcolours[7],bg=stimcolours[8],cex=2,lwd=3)
+
+points(allfacilitation[2,1],allsuppression[2,1],pch=22,col=stimcolours[1],bg=stimcolours[2],cex=2,lwd=3)
+points(allfacilitation[2,2],allsuppression[2,2],pch=22,col=stimcolours[3],bg=stimcolours[4],cex=2,lwd=3)
+points(allfacilitation[2,3],allsuppression[2,3],pch=22,col=stimcolours[6],bg=stimcolours[5],cex=2,lwd=3)
+points(allfacilitation[2,4],allsuppression[2,4],pch=22,col=stimcolours[7],bg=stimcolours[8],cex=2,lwd=3)
 
 par(pty="s")  # make axis square
 plot(x=NULL,y=NULL,axes=FALSE, ann=FALSE, xlim=plotlims[1:2], ylim=plotlims[3:4])  
@@ -2182,8 +1881,6 @@ mtext(text = ticklabelsy, side = 2, at=ticklocsy, line=0.2, las=1)
 
 title(xlab="Binocular facilitation", col.lab=rgb(0,0,0), line=1.2, cex.lab=1.5)    
 title(ylab="Dichoptic suppression", col.lab=rgb(0,0,0), line=1.8, cex.lab=1.5)
-
-points(allbin[5:8,5],alldich[5:8,5],pch=21)
 
 
 plotlims <- c(-24,12,0,0.6) 
@@ -2385,7 +2082,7 @@ The diameter of the pupil fluctuates in response to levels of ambient light and 
 
 # Introduction
 
-The autonomic nervous system regulates many involuntary bodily processes, including the constriction and dilation of the pupils in response to light [@McDougal2015]. The anatomical pathway from the retina to the subcortical nuclei controlling the pupillary light response (PLR) is well established: it includes the Pretectal Olivary nucleus (PON), the Superior Cervical ganglion and the Edinger-Westphal nucleus, which project to the iris sphincter muscles that directly control the pupil size [@McDougal2008; @McDougal2015; @Wang2015]. Evidence of a binocular component to the PLR is shown by the existence of a consensual response of the pupil [the stimulation of one eye will cause constriction of the other eye, @Wyatt1981]. The anatomical segregation of the subcortical pathway from the rest of the brain means that this binocular combination of signals must occur independently of the cortical processes of binocular integration required for visual perception. Our recent work [@Segala2023] has shown that the algorithm underlying binocular combination of light in the pupil pathway differs from that in the cortex. Here we extend this paradigm to compare binocular combination in different photoreceptor pathways that feed into the autonomic nervous system.
+The autonomic nervous system regulates many involuntary bodily processes, including the constriction and dilation of the pupils in response to light [@McDougal2015]. The anatomical pathway from the retina to the subcortical nuclei controlling the pupillary light response (PLR) is well established: it includes the Pretectal Olivary nucleus (PON), the Superior Cervical ganglion and the Edinger-Westphal nucleus, which project to the iris sphincter muscles that directly control the pupil size [@McDougal2008; @McDougal2015; @Wang2015]. Evidence of a binocular component to the PLR is shown by the existence of a consensual response of the pupil [the stimulation of one eye will cause constriction of the other eye; @Wyatt1981]. The anatomical segregation of the subcortical pathway from the rest of the brain means that this binocular combination of signals must occur independently of the cortical processes of binocular integration required for visual perception. Our recent work [@Segala2023] has shown that the algorithm underlying binocular combination of light in the pupil pathway differs from that in the cortex. Here we extend this paradigm to compare binocular combination in different photoreceptor pathways that feed into the autonomic nervous system.
 
 Different classes of retinal photoreceptors, including cones, rods and the recently discovered melanopsin-containing intrinsically photosensitive retinal ganglion cells (ipRGCs), are directly involved in controlling and maintaining the size of the pupils [@Barrionuevo2014; @Barrionuevo2018; @Dacey2005; @Murray2018; @Spitschan2014; @Spitschan2019; @Woelders2018]. The cones have been shown to drive the initial rapid constriction of the pupils [@Mathot2018], while the slower and longer activation of the ipRGCs shows their role in maintaining the constriction over a prolonged period of time and in regulating the post-illumination pupillary response [@Markwell2010; @McDougal2010]. The ipRGCs are a unique photoreceptor class that has been discovered recently [@Provencio2000]. They express the photopigment melanopsin, and are involved in the regulation of the circadian rhythm [@Provencio2000; @Panda2002; @Ruby2002], forming a major input to the PON [@Dacey2003]. The first direct evidence of the involvement of the ipRGCs in the PLR was shown in rats by @Lucas2003 who genetically deleted the melanopsin gene from rats, resulting in the loss of the intrinsic photosensitivity of the cells and a reduced pupil constriction. This same behaviour was later also observed in primates and humans [@Gamlin2007], where it was demonstrated that the PLR continues during light presentation even when cone and rod signalling is blocked, indicating the primary role of the ipRGCs in maintaining pupil constriction over a prolonged time.
 
@@ -2413,7 +2110,7 @@ knitr::include_graphics(paste0(figdir,'CRFs.pdf'))
 
 ```
 
-In contemporary models of binocular signal combination, the amount of binocular facilitation is determined by the magnitude of interocular suppression, with strong suppression reducing facilitation [@Kingdom2015]. We can estimate the strength of interocular suppression by measuring how much monocular responses are reduced when a high contrast dichoptic mask is shown to the other eye. In our paradigm, this mask flickered at a lower frequency (0.4Hz) so that the two stimulus components remain distinct in the Fourier spectrum [e.g. @Busse2009]. The yellow diamond symbols in Figure \@ref(fig:CRFplots) show the target responses in this condition, and in most cases are weaker than the monocular responses (red circles). The strongest dichoptic masking is found in the first harmonic L-M condition, where we also observed the binocular suppression effect. We summarise this relationship by calculating an index for each effect, and show that the binocular facilitation effect is negatively correlated with the dichoptic masking effect (see Figure \@ref(fig:suppressionfig)).
+In contemporary models of binocular signal combination, the amount of binocular facilitation is determined by the magnitude of interocular suppression, with strong suppression reducing facilitation [@Kingdom2015]. We can estimate the strength of interocular suppression by measuring how much monocular responses are reduced when a high contrast dichoptic mask is shown to the other eye. In our paradigm, this mask flickered at a lower frequency (0.4Hz) so that the two stimulus components remain distinct in the Fourier spectrum [e.g. @Busse2009]. The yellow diamond symbols in Figure \@ref(fig:CRFplots) show the target responses in this condition, and in most cases are weaker than the monocular responses (red circles). The strongest dichoptic masking is found in the first harmonic L-M condition, where we also observed the binocular suppression effect. 
 
 ```{r suppressionfig, fig.cap="P.", fig.align="center", echo=FALSE}
 
@@ -2421,11 +2118,11 @@ knitr::include_graphics(paste0(figdir,'suppressionfig.pdf'))
 
 ```
 
-Next, we fitted all 8 data sets using a Bayesian hierarchical implementation of a simple binocular combination model [@Meese2006; @Segala2023]. Our primary interest was to compare posterior distributions of the weight of interocular suppression, which are showin in Figure \@ref(fig:suppressionfig). Consistent with our earlier observations, at the first harmonic the strongest suppressive weight corresponds to the L-M condition, and the weakest suppression corresponds to the luminance condition [also consistent with @Segala2023]. The model fits were of good quality, as shown by the curves in Figure \@ref(fig:CRFplots). Further details of fitted parameters, and model behaviour in other empirical conditions are provided in the Supplementary Materials.
+Next, we fitted all 8 data sets using a Bayesian hierarchical implementation of a simple binocular combination model [@Meese2006; @Segala2023]. Our primary objective was to compare posterior distributions of the weight of interocular suppression, which are shown in Figure \@ref(fig:suppressionfig). Consistent with our earlier observations, at the first harmonic the strongest suppressive weight corresponds to the L-M condition, and the weakest suppression corresponds to the luminance condition [also consistent with @Segala2023]. The model fits were of good quality, as shown by the curves in Figure \@ref(fig:CRFplots). Further details of fitted parameters, and model behaviour in other empirical conditions are provided in the Supplementary Materials. We used the model fits to summarise the relationship between binocular facilitation and interocular suppression by calculating an index for each effect, and show that the facilitation effect is negatively correlated with the dichoptic masking effect (see Figure \@ref(fig:suppressionfig)).
 
 Finally, we inspected the response phase of our four stimulation conditions, given previous reports that these differ across pathways [@Spitschan2014], and may be in antiphase for melanopsin and S-cone signals. Figure \@ref(fig:phaseplots) shows the phase angles for the first (a) and second (b) harmonic frequencies for binocular stimulation (monocular stimulation produced very similar results). At the first harmonic, melanopsin and S-cone signals differed in phase by more than 90 degrees, though they were not fully in antiphase. The luminance and L-M responses were more closely in antiphase to each other, however this is likely due to our choice to modulate L+M- in the first half-cycle (corresponding to a luminance increase in the luminance condition), and L-M+ in the second half-cycle (corresponding to a luminance decrease in the luminance condition). Had we reversed this phase arrangement, we would likely have seen a close phase correspondence between the L-M and luminance conditions. Phase differences between the luminance, S-cone and melanopsin conditions are likely attributable to different lags in phototransduction at the earliest stage (i.e. in the retina). At the second harmonic frequency (Figure \@ref(fig:phaseplots)b), the luminance condition was again out of phase with the other three, and was approximately in quadrature phase with the L-M condition, and in antiphase with both the S-cone and melanopsin conditions (which were in phase with each other).
 
-```{r phaseplots, fig.cap="Pupil phase plots at the first and second harmonic frequencies for the luminance, melanopsin, L-M pathway and the S-(L+M) pathway conditions Panel (a) shows the pupil response at the first harmonic frequency during binocular stimulation. Panel (b) shows the pupil response at the second harmonic frequency during binocular stimulation. In panel (a) the luminance amplitudes have been scaled down by a factor of 10 to be compared with the other conditions.", fig.align="center", echo=FALSE}
+```{r phaseplots, fig.cap="Pupil phase plots at the first and second harmonic frequencies for the luminance, melanopsin, L-M pathway and the S-(L+M) pathway conditions Panel (a) shows the pupil response at the first harmonic frequency during binocular stimulation. Panel (b) shows the pupil response at the second harmonic frequency during binocular stimulation. In panel (a) the luminance amplitudes have been scaled down by a factor of 10 to enable comparison with the other conditions.", fig.align="center", echo=FALSE}
 
 knitr::include_graphics(paste0(figdir,'phaseplots.pdf'))
 
