@@ -19,7 +19,7 @@ header-includes:
 
 ```{r setup, include=FALSE}
 
-processdata <- 0  # this flag determines the amount of processing, with 4 levels:
+processdata <- 1 # this flag determines the amount of processing, with 4 levels:
 # 0 - do no processing, generate the pdf using existing versions of all figures
 # 1 - generate figures using the processed group data
 # 2 - average data across participants, do bootstrapping
@@ -27,14 +27,22 @@ processdata <- 0  # this flag determines the amount of processing, with 4 levels
 
 domodelling <- 0    # if set to 1, run the Stan models (takes ~24 hours)
 
-localdir <- 'local/'    # all files are stored in the project directory /local/ which git is told to ignore
-if (!file.exists(localdir)){dir.create(localdir)}   # create a local directory to store data and outputs
+# all files are stored in the project directory /local/ which git is told to ignore
+# create a local directory to store data and outputs
+localdir <- 'local/'
+if (!file.exists(localdir)){dir.create(localdir)}   
+
+# create a local directory to store raw data
 rawdir <- 'local/rawdata/'
-if (!file.exists(rawdir)){dir.create(rawdir)}   # create a local directory to store raw data
-figdir <- 'Figures/'
-if (!file.exists(figdir)){dir.create(figdir)}   # create a local directory to store figures
+if (!file.exists(rawdir)){dir.create(rawdir)}  
+
+# create a local directory to store processed data
 datadir <- 'local/processeddata/'
-if (!file.exists(datadir)){dir.create(datadir)}   # create a local directory to store processed data
+if (!file.exists(datadir)){dir.create(datadir)}   
+
+# create a local directory to store figures
+figdir <- 'Figures/'
+if (!file.exists(figdir)){dir.create(figdir)}
 
 # cut off for data inclusion (Mahalanobis distance for complex data)
 SDthresh <<- 3
@@ -193,24 +201,50 @@ if (processdata>2){
   }
 }
 
+if (processdata==2){
+# if we're going to need the pre-processed files, extract from zip file
+  if (!file.exists(paste0(datadir,'P301_summary.RData'))){
+   if (!file.exists(paste0(localdir,'IndividualSummary.zip'))){
+          osfnode <- '9ebtd'
+          osfproject <- osf_retrieve_node(osfnode)
+          osffiles <- osf_ls_files(osfproject,n_max=300)
+          fid <- which(osffiles$name=='IndividualSummary.zip')
+          osf_download(osffiles[fid,],localdir,progress=TRUE)
+   }
+          unzip(paste0(localdir,'IndividualSummary.zip'),exdir=datadir)
+  }
+}
 
-# if (processdata==2){
-# # if we're going to need the pre-processed files, extract from zip file
-#   if (!file.exists(paste0(datadir,'P101summary.RData'))){
-#    if (file.exists('resources/allprocessed.zip')){file.copy('resources/allprocessed.zip',localdir)}
-#    if (!file.exists('resources/allprocessed.zip')){ 
-#           osfnode <- '2qu6y'
-#           osfproject <- osf_retrieve_node(osfnode)
-#           osffiles <- osf_ls_files(osfproject,n_max=300)
-#           fid <- which(osffiles$name=='allprocessed.zip')
-#           osf_download(osffiles[fid,],localdir,progress=TRUE)
-#    }
-#           unzip(paste0(localdir,'allprocessed.zip'),exdir=localdir)
-#           d <- dir(paste0(localdir,'allprocessed'),full.names=TRUE)
-#           file.copy(d,datadir)
-#   }
-# }
+if (processdata<2){
+  # if we're using the pre-processed data, check it's present and download if not
+exptnames <- c('AveragedataLum.RData','AveragedataLM.RData','AveragedataS.RData','AveragedataMel.RData','included.RData')
+for (f in 1:length(exptnames)){
+if (!file.exists(paste0(datadir,exptnames[f]))){
+  if (!exists('osffiles')){
+    osfnode <- '9ebtd'
+    osfproject <- osf_retrieve_node(osfnode)
+    osffiles <- osf_ls_files(osfproject,n_max=300)
+  }
+  fid <- which(osffiles$name==exptnames[f])
+  osf_download(osffiles[fid,],datadir,progress=TRUE)
+}}}
 
+if (domodelling==0){
+# if we're not doing the modelling, check if the model outputs are present and download if not
+  exptnames <- c('modeloutputLum.RData','modeloutputLM.RData','modeloutputS.RData','modeloutputMel.RData')
+
+for (f in 1:length(exptnames)){
+if (!file.exists(paste0(datadir,exptnames[f]))){
+  if (!exists('osffiles')){
+    osfnode <- '9ebtd'
+    osfproject <- osf_retrieve_node(osfnode)
+    osffiles <- osf_ls_files(osfproject,n_max=300)
+  }
+  fid <- which(osffiles$name==exptnames[f])
+  osf_download(osffiles[fid,],datadir,progress=TRUE)
+}
+}
+}
 
 ```
 
@@ -229,92 +263,6 @@ Address for correspondence: Federico G. Segala, [federico.segala\@york.ac.uk](fe
 # analyse individual participant data for all conditions
 
 if (processdata > 2){
-  # for (participant in 1:24) {
-  # 
-  #     # if there is no directory for this participant's data
-  #     if (!file.exists(paste0(rawdir,'P',600+participant,'_S1_annotations.csv'))){
-  #       
-  #        # if the tar file of this participant's data doesn't exist
-  #        if (!file.exists(paste0(rawdir,'P',600+participant,'.zip'))){
-  #          # download it from OSF
-  #          if (!exists('osffiles')){
-  #          osfnode <- '6u7db'
-  #          osfproject <- osf_retrieve_node(osfnode)
-  #         osffiles <- osf_ls_files(osfproject,n_max=300)}
-  #         fid <- which(osffiles$name==paste0('P',600+participant,'.zip'))
-  #         osf_download(osffiles[fid,],rawdir,progress=TRUE)
-  #        }
-  #        
-  #        # then unzip the zip file
-  #        unzip(paste0(rawdir,'P',600+participant,'.zip'), exdir=rawdir, overwrite=TRUE)
-  #        
-  #        # and delete the tar file to save storage space
-  #        file.remove(paste0(rawdir,'P',600+participant,'.zip'))
-  #     }
-  #   
-  #   # if there is no directory for this participant's data
-  #     if (!file.exists(paste0(rawdir,'P',500+participant,'_S1_annotations.csv'))){
-  #       
-  #        # if the tar file of this participant's data doesn't exist
-  #        if (!file.exists(paste0(rawdir,'P',500+participant,'.zip'))){
-  #          # download it from OSF
-  #          if (!exists('osffiles')){
-  #          osfnode <- 'xkgd9'
-  #          osfproject <- osf_retrieve_node(osfnode)
-  #         osffiles <- osf_ls_files(osfproject,n_max=300)}
-  #         fid <- which(osffiles$name==paste0('P',500+participant,'.zip'))
-  #         osf_download(osffiles[fid,],rawdir,progress=TRUE)
-  #        }
-  #        
-  #        # then unzip the zip file
-  #        unzip(paste0(rawdir,'P',500+participant,'.zip'), exdir=rawdir, overwrite=TRUE)
-  #        
-  #        # and delete the tar file to save storage space
-  #        file.remove(paste0(rawdir,'P',500+participant,'.zip'))
-  #     }
-  #   
-  #   # if there is no directory for this participant's data
-  #     if (!file.exists(paste0(rawdir,'P',700+participant,'_S1_annotations.csv'))){
-  #       
-  #        # if the tar file of this participant's data doesn't exist
-  #        if (!file.exists(paste0(rawdir,'P',700+participant,'.zip'))){
-  #          # download it from OSF
-  #          if (!exists('osffiles')){
-  #          osfnode <- 'pexyk'
-  #          osfproject <- osf_retrieve_node(osfnode)
-  #         osffiles <- osf_ls_files(osfproject,n_max=300)}
-  #         fid <- which(osffiles$name==paste0('P',700+participant,'.zip'))
-  #         osf_download(osffiles[fid,],rawdir,progress=TRUE)
-  #        }
-  #        
-  #        # then unzip the zip file
-  #        unzip(paste0(rawdir,'P',700+participant,'.zip'), exdir=rawdir, overwrite=TRUE)
-  #        
-  #        # and delete the tar file to save storage space
-  #        file.remove(paste0(rawdir,'P',700+participant,'.zip'))
-  #     }
-  #   
-  #   # if there is no directory for this participant's data
-  #     if (!file.exists(paste0(rawdir,'P',300+participant,'_S1_annotations.csv'))){
-  #       
-  #        # if the tar file of this participant's data doesn't exist
-  #        if (!file.exists(paste0(rawdir,'P',300+participant,'.zip'))){
-  #          # download it from OSF
-  #          if (!exists('osffiles')){
-  #          osfnode <- 'k9mdq'
-  #          osfproject <- osf_retrieve_node(osfnode)
-  #         osffiles <- osf_ls_files(osfproject,n_max=300)}
-  #         fid <- which(osffiles$name==paste0('P',300+participant,'.zip'))
-  #         osf_download(osffiles[fid,],rawdir,progress=TRUE)
-  #        }
-  #        
-  #        # then unzip the zip file
-  #        unzip(paste0(rawdir,'P',300+participant,'.zip'), exdir=rawdir, overwrite=TRUE)
-  #        
-  #        # and delete the tar file to save storage space
-  #        file.remove(paste0(rawdir,'P',300+participant,'.zip'))
-  #     }
-  # }
   
   allsubjects <- dir(rawdir)
   for (p in 1:length(allsubjects)){
@@ -451,28 +399,6 @@ if (processdata > 2){
 
 # load in individual participant data and average, save group data
 if (processdata > 1){
-  
-  # if there is no directory for this participant's data
-      if (!file.exists(paste0(datadir,pattern='_summary.RData'))){
-
-         # if the tar file of this participant's data doesn't exist
-         if (!file.exists(paste0(datadir,'IndividualSummary.zip'))){
-           # download it from OSF
-           if (!exists('osffiles')){
-           osfnode <- '9ebtd'
-           osfproject <- osf_retrieve_node(osfnode)
-          osffiles <- osf_ls_files(osfproject,n_max=300)}
-          fid <- which(osffiles$name==paste0('IndividualSummary.zip'))
-          osf_download(osffiles[fid,],datadir,progress=TRUE)
-         }
-
-         # then unzip the zip file
-         unzip(paste0(datadir,'IndividualSummary.zip'), exdir=datadir, overwrite=TRUE)
-
-         # and delete the tar file to save storage space
-         file.remove(paste0(datadir,'IndividualSummary.zip'))
-         file.remove(paste0(datadir,'__MACOSX'))
-      }
   
   prefixlist <- c('P6','P7','P3','P5')
   exptnames <- c('AveragedataLum.RData','AveragedataLM.RData','AveragedataS.RData','AveragedataMel.RData')
@@ -890,46 +816,6 @@ if (domodelling > 0){
 ```
 
 ```{r getmodelpredictions, include=FALSE, results='hide'}
-
-if (!file.exists(paste0(datadir,'modeloutputLum.RData'))){
-  if (!exists('osffiles')){
-    osfnode <- '9ebtd'
-    osfproject <- osf_retrieve_node(osfnode)
-    osffiles <- osf_ls_files(osfproject,n_max=300)
-  }
-  fid <- which(osffiles$name==paste0('modeloutputLum.RData'))
-  osf_download(osffiles[fid,],datadir,progress=TRUE)
-}
-
-if (!file.exists(paste0(datadir,'modeloutputLM.RData'))){
-  if (!exists('osffiles')){
-    osfnode <- '9ebtd'
-    osfproject <- osf_retrieve_node(osfnode)
-    osffiles <- osf_ls_files(osfproject,n_max=300)
-  }
-  fid <- which(osffiles$name==paste0('modeloutputLM.RData'))
-  osf_download(osffiles[fid,],datadir,progress=TRUE)
-}
-
-if (!file.exists(paste0(datadir,'modeloutputMel.RData'))){
-  if (!exists('osffiles')){
-    osfnode <- '9ebtd'
-    osfproject <- osf_retrieve_node(osfnode)
-    osffiles <- osf_ls_files(osfproject,n_max=300)
-  }
-  fid <- which(osffiles$name==paste0('modeloutputMel.RData'))
-  osf_download(osffiles[fid,],datadir,progress=TRUE)
-}
-
-if (!file.exists(paste0(datadir,'modeloutputS.RData'))){
-  if (!exists('osffiles')){
-    osfnode <- '9ebtd'
-    osfproject <- osf_retrieve_node(osfnode)
-    osffiles <- osf_ls_files(osfproject,n_max=300)
-  }
-  fid <- which(osffiles$name==paste0('modeloutputS.RData'))
-  osf_download(osffiles[fid,],datadir,progress=TRUE)
-}
 
 # get predictions of the model based on earlier fits
 
@@ -1744,52 +1630,12 @@ text(0,0.014,'(t)',pos=4,cex=2)
 ```{r plot1Fdata, include=FALSE, results='hide'}
 
 if (processdata > 0){
-  
-if (!file.exists(paste0(datadir,'AveragedataLum.RData'))){
-  if (!exists('osffiles')){
-    osfnode <- '9ebtd'
-    osfproject <- osf_retrieve_node(osfnode)
-    osffiles <- osf_ls_files(osfproject,n_max=300)
-  }
-  fid <- which(osffiles$name==paste0('AveragedataLum.RData'))
-  osf_download(osffiles[fid,],datadir,progress=TRUE)
-}
-
-if (!file.exists(paste0(datadir,'AveragedataLM.RData'))){
-  if (!exists('osffiles')){
-    osfnode <- '9ebtd'
-    osfproject <- osf_retrieve_node(osfnode)
-    osffiles <- osf_ls_files(osfproject,n_max=300)
-  }
-  fid <- which(osffiles$name==paste0('AveragedataLM.RData'))
-  osf_download(osffiles[fid,],datadir,progress=TRUE)
-}
-
-if (!file.exists(paste0(datadir,'AveragedataMel.RData'))){
-  if (!exists('osffiles')){
-    osfnode <- '9ebtd'
-    osfproject <- osf_retrieve_node(osfnode)
-    osffiles <- osf_ls_files(osfproject,n_max=300)
-  }
-  fid <- which(osffiles$name==paste0('AveragedataMel.RData'))
-  osf_download(osffiles[fid,],datadir,progress=TRUE)
-}
-
-if (!file.exists(paste0(datadir,'AveragedataS.RData'))){
-  if (!exists('osffiles')){
-    osfnode <- '9ebtd'
-    osfproject <- osf_retrieve_node(osfnode)
-    osffiles <- osf_ls_files(osfproject,n_max=300)
-  }
-  fid <- which(osffiles$name==paste0('AveragedataS.RData'))
-  osf_download(osffiles[fid,],datadir,progress=TRUE)
-}
 
 contrastsfinedB <- 2:40
 
-pdf(paste0(figdir,"FirstHarmonic.pdf"), bg="transparent", height = 8, width = 24)
+pdf(paste0(figdir,"FirstHarmonic.pdf"), bg="transparent", height = 24, width = 8)
 
-layout(matrix(c(1,2,5,5,6,7,3,4,5,5,8,9),2,6,byrow=TRUE)) 
+layout(matrix(c(1,2,3,4,5,5,5,5,6,7,8,9),6,2,byrow=TRUE)) 
 par(mar=c(3,6,2,1))
 
 condlist <- c(1,2,6)
@@ -1896,12 +1742,12 @@ par(pty="s")  # make axis square
 plot(x=NULL,y=NULL,axes=FALSE, ann=FALSE, xlim=plotlims[1:2], ylim=plotlims[3:4])   # create an empty axis of the correct dimensions
 axis(1, at=ticklocsx, tck=0.01, lab=F, lwd=2)     
 axis(2, at=ticklocsy, tck=0.01, lab=F, lwd=2)
-mtext(text = ticklabelsx, side = 1, at=ticklocsx, line=0.2)    
-mtext(text = ticklabelsy, side = 2, at=ticklocsy, line=0.2, las=1)   
+mtext(text = ticklabelsx, side = 1, at=ticklocsx, line=1, cex=1.5)    
+mtext(text = ticklabelsy, side = 2, at=ticklocsy, line=0.2, las=1, cex=1.5)   
 
-title(xlab="w", col.lab=rgb(0,0,0), line=1.2, cex.lab=1.5)    
-title(ylab="Probability", col.lab=rgb(0,0,0), line=1.8, cex.lab=1.5)
-title(main='Suppressive weight 1F',cex.main=2)
+title(xlab=expression(omega), col.lab=rgb(0,0,0), line=4, cex.lab=6)    
+title(ylab="Probability", col.lab=rgb(0,0,0), line=3, cex.lab=3)
+title(main='Suppressive weight 1F',cex.main=3)
 
 a <- density(20*log10(pupilweightpopLum),from=-48,to=12)   
 polygon(c(-48,a$x,12), c(0,a$y,0), col=addalpha(stimcolours[1],0.5),border=NA) 
@@ -2036,9 +1882,9 @@ if (processdata > 0){
 
 contrastsfinedB <- 2:40
 
-pdf(paste0(figdir,"SecondHarmonic.pdf"), bg="transparent", height = 8, width = 24)
+pdf(paste0(figdir,"SecondHarmonic.pdf"), bg="transparent", height = 24, width = 8)
 
-layout(matrix(c(1,2,5,5,6,7,3,4,5,5,8,9),2,6,byrow=TRUE)) 
+layout(matrix(c(1,2,3,4,5,5,5,5,6,7,8,9),6,2,byrow=TRUE)) 
 par(mar=c(3,6,2,1))
 
 condlist <- c(1,2,6)
@@ -2145,12 +1991,12 @@ par(pty="s")  # make axis square
 plot(x=NULL,y=NULL,axes=FALSE, ann=FALSE, xlim=plotlims[1:2], ylim=plotlims[3:4])   # create an empty axis of the correct dimensions
 axis(1, at=ticklocsx, tck=0.01, lab=F, lwd=2)     
 axis(2, at=ticklocsy, tck=0.01, lab=F, lwd=2)
-mtext(text = ticklabelsx, side = 1, at=ticklocsx, line=0.2)    
-mtext(text = ticklabelsy, side = 2, at=ticklocsy, line=0.2, las=1)   
+mtext(text = ticklabelsx, side = 1, at=ticklocsx, line=1, cex=1.5)    
+mtext(text = ticklabelsy, side = 2, at=ticklocsy, line=0.2, las=1, cex=1.5)   
 
-title(xlab="w", col.lab=rgb(0,0,0), line=1.2, cex.lab=1.5)    
-title(ylab="Probability", col.lab=rgb(0,0,0), line=1.8, cex.lab=1.5)
-title(main='Suppressive weight 2F',cex.main=2)
+title(xlab=expression(omega), col.lab=rgb(0,0,0), line=4, cex.lab=6)    
+title(ylab="Probability", col.lab=rgb(0,0,0), line=3, cex.lab=3)
+title(main='Suppressive weight 2F',cex.main=3)
 
 a <- density(20*log10(pupilweightpopLum2),from=-48,to=12)   
 polygon(c(-48,a$x,12), c(0,a$y,0), col=addalpha(stimcolours[1],0.5),border=NA) 
@@ -2409,7 +2255,7 @@ knitr::include_graphics(paste0(figdir,'methodsfig.pdf'))
 
 Figure \@ref(fig:FirstHarmonicPlots)a-d shows contrast response functions across stimulation conditions for responses at the first harmonic of the main stimulation frequency (0.5Hz). In each plot, the response to monocular stimulation is given by the red circles and typically increases monotonically as a function of stimulus (temporal) contrast. Relative to monocular stimulation, binocular stimulation led to higher response amplitudes, indicating a binocular facilitation effect, for the luminance and S-cone conditions (Figure \@ref(fig:FirstHarmonicPlots)a,c), and to some extent for the melanopsin condition (Figure \@ref(fig:FirstHarmonicPlots)d). However, the L-M cone condition (Figure \@ref(fig:FirstHarmonicPlots)b) produced a binocular suppression effect, where the response to binocular stimulation was weaker than the response to monocular stimulation (blue squares below red circles). These results indicate that the magnitude of binocular facilitation differs across photoreceptor pathway, suggesting heterogeneity in the underlying neural computation.
 
-```{r FirstHarmonicPlots, fig.cap="Contrast response functions for pupil modualations in response to flicker at 0.5Hz (panels a-d), and 0.4Hz (panels f-i), and posterior parameter distributions for the weight of interocular suppression (panel e). Within each panel (except panel e), data points are the coherently averaged amplitudes for each condition, and error bars indicate bootstrapped 95\\% confidence intervals. Curves show model fits using the maximum a posteriori (MAP) parameter values (see Table 1). In panel (e), vertical lines show the MAP estimates, and the thin black curve indicates the prior (note the logarithmic x-axis).", fig.align="center", echo=FALSE}
+```{r FirstHarmonicPlots, fig.cap="Contrast response functions for pupil modualations in response to flicker at 0.5Hz (panels a-d), and 0.4Hz (panels f-i), and posterior parameter distributions for the weight of interocular suppression (panel e). Within each panel (except panel e), data points are the coherently averaged amplitudes for each condition, and error bars indicate bootstrapped 95\\% confidence intervals. Curves show model fits using the maximum a posteriori (MAP) parameter values (see Table 1). In panel (e), vertical lines show the MAP estimates, and the thin black curve indicates the prior (note the logarithmic x-axis).", fig.align="center", out.width="40%", echo=FALSE}
 
 knitr::include_graphics(paste0(figdir,'FirstHarmonic.pdf'))
 
@@ -2438,7 +2284,7 @@ kableExtra::kable_styling(latex_options = "HOLD_position") %>% row_spec(4,hline_
 
 At the second harmonic frequencies, the levels of suppression were more uniform across different photoreceptor pathways (see Figure \@ref(fig:SecondHarmonicPlots)). In general, suppression estimates were near or above 1 (see lower rows of Table \@ref(tab:paramtable)), with substantial overlap between the posterior distributions (Figure \@ref(fig:SecondHarmonicPlots)e). The contrast response functions also looked more uniform, and generally involved less binocular facilitation and more interocular suppression than were seen at the first harmonics. The L-M condition now featured the weakest suppressive weight, and the strongest binocular facilitation, which was the opposite pattern seen at the first harmonic.
 
-```{r SecondHarmonicPlots, fig.cap="Responses at the second harmonic frequencies (1Hz and 0.8Hz), in the same format as Figure 2.", fig.align="center", echo=FALSE}
+```{r SecondHarmonicPlots, fig.cap="Responses at the second harmonic frequencies (1Hz and 0.8Hz), in the same format as Figure 2.", fig.align="center", out.width="40%", echo=FALSE}
 
 knitr::include_graphics(paste0(figdir,'SecondHarmonic.pdf'))
 
