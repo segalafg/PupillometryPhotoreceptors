@@ -19,7 +19,7 @@ header-includes:
 
 ```{r setup, include=FALSE}
 
-processdata <- 1 # this flag determines the amount of processing, with 4 levels:
+processdata <- 0 # this flag determines the amount of processing, with 4 levels:
 # 0 - do no processing, generate the pdf using existing versions of all figures
 # 1 - generate figures using the processed group data
 # 2 - average data across participants, do bootstrapping
@@ -1677,7 +1677,7 @@ axis(1, at=ticklocsx, tck=0.01, lab=F, lwd=2)     # plot tick marks (no labels)
 axis(2, at=ticklocsy2, tck=0.01, lab=F, lwd=2)
 mtext(text = ticklabelsx, side = 1, at=ticklocsx, line=0.3)     # add the tick labels
 mtext(text = ticklabelsy2, side = 2, at=ticklocsy2, line=0.2, las=1) 
-title(xlab="Target contrast (%)", col.lab=rgb(0,0,0), line=1.5, cex.lab=1.5)    # titles for axes
+title(xlab="Target contrast (% of max)", col.lab=rgb(0,0,0), line=1.5, cex.lab=1.5)    # titles for axes
 title(ylab="Amplitude at 0.5Hz (mm)", col.lab=rgb(0,0,0), line=3.5, cex.lab=1.5)
 title(main='L-M cone',cex.main=2)
 for (cond in 1:3){
@@ -1697,7 +1697,7 @@ axis(1, at=ticklocsx, tck=0.01, lab=F, lwd=2)     # plot tick marks (no labels)
 axis(2, at=ticklocsy2, tck=0.01, lab=F, lwd=2)
 mtext(text = ticklabelsx, side = 1, at=ticklocsx, line=0.3)     # add the tick labels
 mtext(text = ticklabelsy2, side = 2, at=ticklocsy2, line=0.2, las=1) 
-title(xlab="Target contrast (%)", col.lab=rgb(0,0,0), line=1.5, cex.lab=1.5)    # titles for axes
+title(xlab="Target contrast (% of max)", col.lab=rgb(0,0,0), line=1.5, cex.lab=1.5)    # titles for axes
 title(ylab="Amplitude at 0.5Hz (mm)", col.lab=rgb(0,0,0), line=3.5, cex.lab=1.5)
 title(main='S cone',cex.main=2)
 for (cond in 1:3){
@@ -1717,7 +1717,7 @@ axis(1, at=ticklocsx, tck=0.01, lab=F, lwd=2)     # plot tick marks (no labels)
 axis(2, at=ticklocsy2, tck=0.01, lab=F, lwd=2)
 mtext(text = ticklabelsx, side = 1, at=ticklocsx, line=0.3)     # add the tick labels
 mtext(text = ticklabelsy2, side = 2, at=ticklocsy2, line=0.2, las=1) 
-title(xlab="Target contrast (%)", col.lab=rgb(0,0,0), line=1.5, cex.lab=1.5)    # titles for axes
+title(xlab="Target contrast (% of max)", col.lab=rgb(0,0,0), line=1.5, cex.lab=1.5)    # titles for axes
 title(ylab="Amplitude at 0.5Hz (mm)", col.lab=rgb(0,0,0), line=3.5, cex.lab=1.5)
 title(main='Melanopsin',cex.main=2)
 for (cond in 1:3){
@@ -1816,7 +1816,7 @@ axis(1, at=ticklocsx, tck=0.01, lab=F, lwd=2)     # plot tick marks (no labels)
 axis(2, at=ticklocsy2, tck=0.01, lab=F, lwd=2)
 mtext(text = ticklabelsx, side = 1, at=ticklocsx, line=0.3)     # add the tick labels
 mtext(text = ticklabelsy2, side = 2, at=ticklocsy2, line=0.2, las=1) 
-title(xlab="Target contrast (%)", col.lab=rgb(0,0,0), line=1.5, cex.lab=1.5)    # titles for axes
+title(xlab="Target contrast (% of max)", col.lab=rgb(0,0,0), line=1.5, cex.lab=1.5)    # titles for axes
 title(ylab="Amplitude at 0.4Hz (mm)", col.lab=rgb(0,0,0), line=3.5, cex.lab=1.5)
 title(main='L-M cone',cex.main=2)
 for (cond in 1:3){
@@ -1836,7 +1836,7 @@ axis(1, at=ticklocsx, tck=0.01, lab=F, lwd=2)     # plot tick marks (no labels)
 axis(2, at=ticklocsy2, tck=0.01, lab=F, lwd=2)
 mtext(text = ticklabelsx, side = 1, at=ticklocsx, line=0.3)     # add the tick labels
 mtext(text = ticklabelsy2, side = 2, at=ticklocsy2, line=0.2, las=1) 
-title(xlab="Target contrast (%)", col.lab=rgb(0,0,0), line=1.5, cex.lab=1.5)    # titles for axes
+title(xlab="Target contrast (% of max)", col.lab=rgb(0,0,0), line=1.5, cex.lab=1.5)    # titles for axes
 title(ylab="Amplitude at 0.4Hz (mm)", col.lab=rgb(0,0,0), line=3.5, cex.lab=1.5)
 title(main='S cone',cex.main=2)
 for (cond in 1:3){
@@ -1856,7 +1856,7 @@ axis(1, at=ticklocsx, tck=0.01, lab=F, lwd=2)     # plot tick marks (no labels)
 axis(2, at=ticklocsy2, tck=0.01, lab=F, lwd=2)
 mtext(text = ticklabelsx, side = 1, at=ticklocsx, line=0.3)     # add the tick labels
 mtext(text = ticklabelsy2, side = 2, at=ticklocsy2, line=0.2, las=1) 
-title(xlab="Target contrast (%)", col.lab=rgb(0,0,0), line=1.5, cex.lab=1.5)    # titles for axes
+title(xlab="Target contrast (% of max)", col.lab=rgb(0,0,0), line=1.5, cex.lab=1.5)    # titles for axes
 title(ylab="Amplitude at 0.4Hz (mm)", col.lab=rgb(0,0,0), line=3.5, cex.lab=1.5)
 title(main='Melanopsin',cex.main=2)
 for (cond in 1:3){
@@ -1926,7 +1926,7 @@ axis(1, at=ticklocsx, tck=0.01, lab=F, lwd=2)     # plot tick marks (no labels)
 axis(2, at=ticklocsy2, tck=0.01, lab=F, lwd=2)
 mtext(text = ticklabelsx, side = 1, at=ticklocsx, line=0.3)     # add the tick labels
 mtext(text = ticklabelsy2, side = 2, at=ticklocsy2, line=0.2, las=1) 
-title(xlab="Target contrast (%)", col.lab=rgb(0,0,0), line=1.5, cex.lab=1.5)    # titles for axes
+title(xlab="Target contrast (% of max)", col.lab=rgb(0,0,0), line=1.5, cex.lab=1.5)    # titles for axes
 title(ylab="Amplitude at 1Hz (mm)", col.lab=rgb(0,0,0), line=3.5, cex.lab=1.5)
 title(main='L-M cone',cex.main=2)
 for (cond in 1:3){
@@ -1946,7 +1946,7 @@ axis(1, at=ticklocsx, tck=0.01, lab=F, lwd=2)     # plot tick marks (no labels)
 axis(2, at=ticklocsy2, tck=0.01, lab=F, lwd=2)
 mtext(text = ticklabelsx, side = 1, at=ticklocsx, line=0.3)     # add the tick labels
 mtext(text = ticklabelsy2, side = 2, at=ticklocsy2, line=0.2, las=1) 
-title(xlab="Target contrast (%)", col.lab=rgb(0,0,0), line=1.5, cex.lab=1.5)    # titles for axes
+title(xlab="Target contrast (% of max)", col.lab=rgb(0,0,0), line=1.5, cex.lab=1.5)    # titles for axes
 title(ylab="Amplitude at 1Hz (mm)", col.lab=rgb(0,0,0), line=3.5, cex.lab=1.5)
 title(main='S cone',cex.main=2)
 for (cond in 1:3){
@@ -1966,7 +1966,7 @@ axis(1, at=ticklocsx, tck=0.01, lab=F, lwd=2)     # plot tick marks (no labels)
 axis(2, at=ticklocsy2, tck=0.01, lab=F, lwd=2)
 mtext(text = ticklabelsx, side = 1, at=ticklocsx, line=0.3)     # add the tick labels
 mtext(text = ticklabelsy2, side = 2, at=ticklocsy2, line=0.2, las=1) 
-title(xlab="Target contrast (%)", col.lab=rgb(0,0,0), line=1.5, cex.lab=1.5)    # titles for axes
+title(xlab="Target contrast (% of max)", col.lab=rgb(0,0,0), line=1.5, cex.lab=1.5)    # titles for axes
 title(ylab="Amplitude at 1Hz (mm)", col.lab=rgb(0,0,0), line=3.5, cex.lab=1.5)
 title(main='Melanopsin',cex.main=2)
 for (cond in 1:3){
@@ -2065,7 +2065,7 @@ axis(1, at=ticklocsx, tck=0.01, lab=F, lwd=2)     # plot tick marks (no labels)
 axis(2, at=ticklocsy2, tck=0.01, lab=F, lwd=2)
 mtext(text = ticklabelsx, side = 1, at=ticklocsx, line=0.3)     # add the tick labels
 mtext(text = ticklabelsy2, side = 2, at=ticklocsy2, line=0.2, las=1) 
-title(xlab="Target contrast (%)", col.lab=rgb(0,0,0), line=1.5, cex.lab=1.5)    # titles for axes
+title(xlab="Target contrast (% of max)", col.lab=rgb(0,0,0), line=1.5, cex.lab=1.5)    # titles for axes
 title(ylab="Amplitude at 0.8Hz (mm)", col.lab=rgb(0,0,0), line=3.5, cex.lab=1.5)
 title(main='L-M cone',cex.main=2)
 for (cond in 1:3){
@@ -2085,7 +2085,7 @@ axis(1, at=ticklocsx, tck=0.01, lab=F, lwd=2)     # plot tick marks (no labels)
 axis(2, at=ticklocsy2, tck=0.01, lab=F, lwd=2)
 mtext(text = ticklabelsx, side = 1, at=ticklocsx, line=0.3)     # add the tick labels
 mtext(text = ticklabelsy2, side = 2, at=ticklocsy2, line=0.2, las=1) 
-title(xlab="Target contrast (%)", col.lab=rgb(0,0,0), line=1.5, cex.lab=1.5)    # titles for axes
+title(xlab="Target contrast (% of max)", col.lab=rgb(0,0,0), line=1.5, cex.lab=1.5)    # titles for axes
 title(ylab="Amplitude at 0.8Hz (mm)", col.lab=rgb(0,0,0), line=3.5, cex.lab=1.5)
 title(main='S cone',cex.main=2)
 for (cond in 1:3){
@@ -2105,7 +2105,7 @@ axis(1, at=ticklocsx, tck=0.01, lab=F, lwd=2)     # plot tick marks (no labels)
 axis(2, at=ticklocsy2, tck=0.01, lab=F, lwd=2)
 mtext(text = ticklabelsx, side = 1, at=ticklocsx, line=0.3)     # add the tick labels
 mtext(text = ticklabelsy2, side = 2, at=ticklocsy2, line=0.2, las=1) 
-title(xlab="Target contrast (%)", col.lab=rgb(0,0,0), line=1.5, cex.lab=1.5)    # titles for axes
+title(xlab="Target contrast (% of max)", col.lab=rgb(0,0,0), line=1.5, cex.lab=1.5)    # titles for axes
 title(ylab="Amplitude at 0.8Hz (mm)", col.lab=rgb(0,0,0), line=3.5, cex.lab=1.5)
 title(main='Melanopsin',cex.main=2)
 for (cond in 1:3){
