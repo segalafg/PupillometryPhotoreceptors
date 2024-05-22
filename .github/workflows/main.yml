@@ -6,9 +6,9 @@ name: autobuild
 # events but only for the main branch
 on:
   push:
-    branches: [ main ]
+    branches: [ master ]
   pull_request:
-    branches: [ main ]
+    branches: [ master ]
 
 permissions:
   contents: write
@@ -36,7 +36,7 @@ jobs:
       uses: JamesIves/github-pages-deploy-action@v4
       with:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        BRANCH: main  # The branch the action should deploy to.
+        BRANCH: master  # The branch the action should deploy to.
         FOLDER: build # The folder the action should deploy.
         CLEAN: false
         FORCE: true
