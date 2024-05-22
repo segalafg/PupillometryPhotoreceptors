@@ -202,7 +202,7 @@ if (processdata>2){
   }
 }
 
-if (processdata==2){
+if (processdata==2 || domodelling==1){
 # if we're going to need the pre-processed files, extract from zip file
   if (!file.exists(paste0(datadir,'P301_summary.RData'))){
    if (!file.exists(paste0(localdir,'IndividualSummary.zip'))){
