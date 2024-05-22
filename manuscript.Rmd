@@ -1,8 +1,8 @@
 ---
 title: 'Binocular combination in the autonomic nervous system'
 author: |
- | Federico G. Segala$^1$, Aurelio Bruno$^{1,2}$, Joel T. Martin$^{1,3}$, $
- | Anisa Y. Morsi$^1$, Alex R. Wade$^{1,4} & Daniel H. Baker$^{1,4}$
+ | Federico G. Segala$^1$, Aurelio Bruno$^{1,2}$, Joel T. Martin$^{1,3}$,
+ | Anisa Y. Morsi$^1$, Alex R. Wade$^{1,4}$ & Daniel H. Baker$^{1,4}$
 output:
   bookdown::pdf_document2:
     fig_caption: yes
