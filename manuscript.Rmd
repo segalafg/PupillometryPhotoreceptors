@@ -20,13 +20,13 @@ header-includes:
 
 ```{r setup, include=FALSE}
 
-processdata <- 2 # this flag determines the amount of processing, with 4 levels:
+processdata <- 0 # this flag determines the amount of processing, with 4 levels:
 # 0 - do no processing, generate the pdf using existing versions of all figures
 # 1 - generate figures using the processed group data
 # 2 - average data across participants, do bootstrapping
 # 3 - download all raw data and analyse (requires 56GB of storage)
 
-domodelling <- 0    # if set to 1, run the Stan models (takes ~24 hours)
+domodelling <- 1    # if set to 1, run the Stan models (takes ~24 hours)
 
 # all files are stored in the project directory /local/ which git is told to ignore
 # create a local directory to store data and outputs
@@ -65,12 +65,12 @@ library(kableExtra)
 knitr::opts_chunk$set(echo = TRUE)
 
 # settings for sampler 
-numSavedSteps <- 100000    # total number of MCMC steps
-adaptSteps <- 1000  # Number of steps to "tune" the samplers
-burnInSteps <- 2000 
-thinSteps <- 10
-nChains <- 16
-ncores <- 8
+numSavedSteps <- 100000/100    # total number of MCMC steps
+adaptSteps <- 1000/10  # Number of steps to "tune" the samplers
+burnInSteps <- 2000/10
+thinSteps <- 10/10
+nChains <- 16/4
+ncores <- 8/8
 options(mc.cores=ncores)
 
 # helper function to make colours transparent
