@@ -249,13 +249,13 @@ if (!file.exists(paste0(datadir,exptnames[f]))){
 
 ```
 
-$^1$Department of Psychology, University of York, Heslington, York, United Kingdom.
+$^1$Department of Psychology, University of York, Heslington, York, YO10 5DD, United Kingdom.
 
-$^2$School of Psychology and Vision Sciences, University of Leicester, Leicester, United Kingdom.
+$^2$School of Psychology and Vision Sciences, University of Leicester, Leicester, LE1 7RH, United Kingdom.
 
-$^3$School of Philosophy, Psychology and Language Sciences, University of Edinburgh, Edinburgh, United Kingdom.
+$^3$School of Philosophy, Psychology and Language Sciences, University of Edinburgh, Edinburgh, EH8 9AD, United Kingdom.
 
-$^4$York Biomedical Research Institute, University of York, Heslington, York, United Kingdom.
+$^4$York Biomedical Research Institute, University of York, Heslington, York, YO10 5NG, United Kingdom.
 
 Address for correspondence: Federico G. Segala, [federico.segala\@york.ac.uk](federico.segala@york.ac.uk)
 
@@ -2194,6 +2194,7 @@ The diameter of the pupil fluctuates in response to levels of ambient light and 
 
 # Significance statement (120 words)
 
+The diameter of the pupil depends on the level of ambient light and is controlled by distinct retinal photoreceptor classes (cones, rods and intrinsically photosensitive retinal ganglion cells). The computational processes behind binocular integration within the subcortical pathways controlling pupil dimension have been investigated and have been shown to occur independently of visual cortex. We investigated binocular combination within the different photoreceptor pathways using silent substitution. We found different patterns of binocular combination in each pathway and also differences in the phase of the pupil response. The results are consistent with a computational model of binocular signal combination, where the weight of interocular suppression differs across pathways, and demonstrate the algorithm governing binocular combination in the autonomic nervous system.
 
 # Introduction
 
@@ -2256,7 +2257,7 @@ knitr::include_graphics(paste0(figdir,'SecondHarmonic.pdf'))
 
 Finally, we inspected the response phase of our four stimulation conditions, given previous reports that these differ across pathways [@Spitschan2014], and may be in antiphase for melanopsin and S-cone signals. Figure \@ref(fig:phaseplots) shows the phase angles for the first (a) and second (b) harmonic frequencies for binocular stimulation (monocular stimulation produced very similar results). At the first harmonic, melanopsin and S-cone signals differed in phase by more than 90 degrees, though they were not fully in antiphase. The luminance and L-M responses were approximately in antiphase to each other, however this is likely due to our choice to modulate L+M- in the first half-cycle of the sine wave (corresponding to a luminance increase in the luminance condition), and L-M+ in the second half-cycle (corresponding to a luminance decrease in the luminance condition). Had we reversed this phase arrangement, we would likely have seen a close phase correspondence between the L-M and luminance conditions (another way to think about this is that L-cone decreases and M-cone increases are processed like luminance increases). Phase differences between the luminance, S-cone and melanopsin conditions are likely attributable to different lags in phototransduction at the earliest stage (i.e. in the retina). At the second harmonic frequency (Figure \@ref(fig:phaseplots)b), the luminance condition was again out of phase with the other three, and was approximately in quadrature phase with the L-M condition, and in antiphase with both the S-cone and melanopsin conditions (which were in phase with each other).
 
-```{r phaseplots, fig.cap="Pupil phase plots at the first and second harmonic frequencies for the luminance, melanopsin, L-M pathway and the S-(L+M) pathway conditions Panel (a) shows the pupil response at the first harmonic frequency during binocular stimulation. Panel (b) shows the pupil response at the second harmonic frequency during binocular stimulation. The five data points for each pathway correspond to the five contrast levels displayed. In panel (a) the luminance amplitudes have been scaled down by a factor of 10 to enable comparison with the other conditions.", fig.align="center", echo=FALSE}
+```{r phaseplots, fig.cap="Pupil phase plots at the first and second harmonic frequencies for the luminance, melanopsin, L-M pathway and the S-(L+M) pathway conditions. Panel (a) shows the pupil response at the first harmonic frequency during binocular stimulation. Panel (b) shows the pupil response at the second harmonic frequency during binocular stimulation. The five data points for each pathway correspond to the five contrast levels displayed. In panel (a) the luminance amplitudes have been scaled down by a factor of 10 to enable comparison with the other conditions.", fig.align="center", echo=FALSE}
 
 knitr::include_graphics(paste0(figdir,'phaseplots.pdf'))
 
