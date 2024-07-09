@@ -1,21 +1,24 @@
 % Options for packages loaded elsewhere
 \PassOptionsToPackage{unicode}{hyperref}
 \PassOptionsToPackage{hyphens}{url}
-\PassOptionsToPackage{dvipsnames,svgnames*,x11names*}{xcolor}
+\PassOptionsToPackage{dvipsnames,svgnames,x11names}{xcolor}
 %
 \documentclass[
 ]{article}
-\usepackage{lmodern}
-\usepackage{amssymb,amsmath}
-\usepackage{ifxetex,ifluatex}
-\ifnum 0\ifxetex 1\fi\ifluatex 1\fi=0 % if pdftex
+\usepackage{amsmath,amssymb}
+\usepackage{iftex}
+\ifPDFTeX
   \usepackage[T1]{fontenc}
   \usepackage[utf8]{inputenc}
   \usepackage{textcomp} % provide euro and other symbols
 \else % if luatex or xetex
-  \usepackage{unicode-math}
+  \usepackage{unicode-math} % this also loads fontspec
   \defaultfontfeatures{Scale=MatchLowercase}
   \defaultfontfeatures[\rmfamily]{Ligatures=TeX,Scale=1}
+\fi
+\usepackage{lmodern}
+\ifPDFTeX\else
+  % xetex/luatex font selection
 \fi
 % Use upquote if available, for straight quotes in verbatim environments
 \IfFileExists{upquote.sty}{\usepackage{upquote}}{}
@@ -34,19 +37,9 @@
   \KOMAoptions{parskip=half}}
 \makeatother
 \usepackage{xcolor}
-\IfFileExists{xurl.sty}{\usepackage{xurl}}{} % add URL line breaks if available
-\IfFileExists{bookmark.sty}{\usepackage{bookmark}}{\usepackage{hyperref}}
-\hypersetup{
-  pdftitle={Binocular combination in the autonomic nervous system},
-  colorlinks=true,
-  linkcolor=black,
-  filecolor=Maroon,
-  citecolor=Blue,
-  urlcolor=Blue,
-  pdfcreator={LaTeX via pandoc}}
-\urlstyle{same} % disable monospaced font for URLs
 \usepackage[margin=1in]{geometry}
-\usepackage{longtable,booktabs}
+\usepackage{longtable,booktabs,array}
+\usepackage{calc} % for calculating minipage widths
 % Correct order of tables after \paragraph or \subparagraph
 \usepackage{etoolbox}
 \makeatletter
@@ -55,7 +48,7 @@
 % Allow footnotes in longtable head/foot
 \IfFileExists{footnotehyper.sty}{\usepackage{footnotehyper}}{\usepackage{footnote}}
 \makesavenoteenv{longtable}
-\usepackage{graphicx,grffile}
+\usepackage{graphicx}
 \makeatletter
 \def\maxwidth{\ifdim\Gin@nat@width>\linewidth\linewidth\else\Gin@nat@width\fi}
 \def\maxheight{\ifdim\Gin@nat@height>\textheight\textheight\else\Gin@nat@height\fi}
@@ -72,7 +65,40 @@
 \providecommand{\tightlist}{%
   \setlength{\itemsep}{0pt}\setlength{\parskip}{0pt}}
 \setcounter{secnumdepth}{5}
-\usepackage{caption}
+% definitions for citeproc citations
+\NewDocumentCommand\citeproctext{}{}
+\NewDocumentCommand\citeproc{mm}{%
+  \begingroup\def\citeproctext{#2}\cite{#1}\endgroup}
+\makeatletter
+ % allow citations to break across lines
+ \let\@cite@ofmt\@firstofone
+ % avoid brackets around text for \cite:
+ \def\@biblabel#1{}
+ \def\@cite#1#2{{#1\if@tempswa , #2\fi}}
+\makeatother
+\newlength{\cslhangindent}
+\setlength{\cslhangindent}{1.5em}
+\newlength{\csllabelwidth}
+\setlength{\csllabelwidth}{3em}
+\newenvironment{CSLReferences}[2] % #1 hanging-indent, #2 entry-spacing
+ {\begin{list}{}{%
+  \setlength{\itemindent}{0pt}
+  \setlength{\leftmargin}{0pt}
+  \setlength{\parsep}{0pt}
+  % turn on hanging indent if param 1 is 1
+  \ifodd #1
+   \setlength{\leftmargin}{\cslhangindent}
+   \setlength{\itemindent}{-1\cslhangindent}
+  \fi
+  % set entry spacing
+  \setlength{\itemsep}{#2\baselineskip}}}
+ {\end{list}}
+\usepackage{calc}
+\newcommand{\CSLBlock}[1]{\hfill\break\parbox[t]{\linewidth}{\strut\ignorespaces#1\strut}}
+\newcommand{\CSLLeftMargin}[1]{\parbox[t]{\csllabelwidth}{\strut#1\strut}}
+\newcommand{\CSLRightInline}[1]{\parbox[t]{\linewidth - \csllabelwidth}{\strut#1\strut}}
+\newcommand{\CSLIndent}[1]{\hspace{\cslhangindent}#1}
+\usepackage{caption} \usepackage{lineno} \linenumbers
 \usepackage{booktabs}
 \usepackage{longtable}
 \usepackage{array}
@@ -87,6 +113,20 @@
 \usepackage[normalem]{ulem}
 \usepackage{makecell}
 \usepackage{xcolor}
+\ifLuaTeX
+  \usepackage{selnolig}  % disable illegal ligatures
+\fi
+\usepackage{bookmark}
+\IfFileExists{xurl.sty}{\usepackage{xurl}}{} % add URL line breaks if available
+\urlstyle{same}
+\hypersetup{
+  pdftitle={Binocular combination in the autonomic nervous system},
+  colorlinks=true,
+  linkcolor={black},
+  filecolor={Maroon},
+  citecolor={Blue},
+  urlcolor={Blue},
+  pdfcreator={LaTeX via pandoc}}
 
 \title{Binocular combination in the autonomic nervous system}
 \author{Federico G. Segala\(^1\)*, Aurelio Bruno\(^{1,2}\), Joel T. Martin\(^{1,3}\),\\
@@ -106,26 +146,23 @@ Anisa Y. Morsi\(^1\), Alex R. Wade\(^{1,4}\) \& Daniel H. Baker\(^{1,4}\)}
 
 *Corresponding author
 
-\hypertarget{abstract}{%
-\section{Abstract}\label{abstract}}
+\section{Abstract}\label{abstract}
 
-The diameter of the pupil fluctuates in response to levels of ambient light and is regulated by the autonomic nervous system. Increasing light in one eye causes both pupils to constrict, implying the system must combine signals across the two eyes -- a process of binocular integration occurring independently of visual cortex. Distinct classes of retinal photoreceptor are involved in controlling and maintaining pupil diameter, with cones and rods driving the initial constriction and intrinsically photosensitive retinal ganglion cells maintaining diameter over prolonged time periods. Here, we investigate binocular combination by targeting different photoreceptor pathways using the silent substitution method to modulate the input spectra. We find different patterns of binocular response in each pathway, and across the first and second harmonic frequencies. At the first harmonic, luminance and S-cone responses showed strong binocular facilitation, and weak interocular suppression. Melanopsin responses were invariant to the number of eyes stimulated. Notably, the L-M pathway involved binocular inhibition, whereby responses to binocular stimulation were weaker than for monocular stimulation. The second harmonic involved strong interocular suppression in all pathways, but with some evidence of binocular facilitation. Our results are consistent with a computational model of binocular signal combination (implemented in a Bayesian hierarchical framework), in which the weight of interocular suppression differs across pathways. We also find pathway differences in response phase, consistent with different lag times for phototransduction. This work demonstrates for the first time the algorithm governing binocular combination in the autonomic nervous system.
+Pupil diameters are regulated by the autonomic nervous system, which combines light signals across the eyes independently of the visual cortex. Distinct classes of retinal photoreceptor are involved in this process, with cones and rods driving the initial constriction and intrinsically photosensitive retinal ganglion cells maintaining diameter over prolonged time periods. We investigated binocular combination by targeting different photoreceptor pathways using a novel binocular multiprimary system to modulate the input spectra via silent substitution. At the first harmonic of the modulation frequency, luminance and S-cone responses showed strong binocular facilitation, and weak interocular suppression. Melanopsin responses were invariant to the number of eyes stimulated. Notably, the L-M pathway involved binocular inhibition, whereby responses to binocular stimulation were weaker than for monocular stimulation. The second harmonic involved strong interocular suppression in all pathways, but with some evidence of binocular facilitation. Our results are consistent with a computational model of binocular signal combination (implemented in a Bayesian hierarchical framework), in which the weight of interocular suppression differs across pathways. We also find pathway differences in response phase, consistent with different lag times for phototransduction. This work demonstrates for the first time the algorithm governing binocular combination in the autonomic nervous system.
 
-\hypertarget{introduction}{%
-\section{Introduction}\label{introduction}}
+\section{Introduction}\label{introduction}
 
-The autonomic nervous system regulates many involuntary bodily processes, including the constriction and dilation of the pupils in response to light.\textsuperscript{\protect\hyperlink{ref-McDougal2015}{1}} The anatomical pathway from the retina to the subcortical nuclei controlling the pupillary light response (PLR) is well established: it includes the Pretectal Olivary nucleus (PON), the Superior Cervical ganglion and the Edinger-Westphal nucleus, which project to the iris sphincter muscles that directly control the pupil size.\textsuperscript{\protect\hyperlink{ref-McDougal2015}{1}--\protect\hyperlink{ref-Wang2015}{3}} Evidence of a binocular component to the PLR is shown by the existence of a consensual response of the pupil (the stimulation of one eye will cause constriction of the other eye)\textsuperscript{\protect\hyperlink{ref-Wyatt1981}{4}}. The anatomical segregation of the subcortical pathway from the rest of the brain means that this binocular combination of signals must occur independently of the cortical processes of binocular integration required for visual perception. Our recent work\textsuperscript{\protect\hyperlink{ref-Segala2023}{5}} has shown that the algorithm underlying binocular combination of light in the pupil pathway differs from that in the cortex. Here we extend this paradigm to compare binocular combination in different photoreceptor pathways that feed into the autonomic nervous system.
+The autonomic nervous system regulates many involuntary bodily processes, including the constriction and dilation of the pupils in response to light\textsuperscript{\citeproc{ref-McDougal2015}{1}}. The anatomical pathway from the retina to the subcortical nuclei controlling the pupillary light response (PLR) is well established: it includes the Pretectal Olivary nucleus (PON), the Superior Cervical ganglion and the Edinger-Westphal nucleus, which project to the iris sphincter muscles that directly control the pupil size\textsuperscript{\citeproc{ref-McDougal2015}{1}--\citeproc{ref-Wang2015}{3}}. Evidence of a binocular component to the PLR is shown by the existence of a consensual response of the pupil (the stimulation of one eye will cause constriction of the other eye)\textsuperscript{\citeproc{ref-Wyatt1981}{4}}. The anatomical segregation of the subcortical pathway from the rest of the brain means that this binocular combination of signals must occur independently of the cortical processes of binocular integration required for visual perception. Our recent work\textsuperscript{\citeproc{ref-Segala2023}{5}} has shown that the algorithm underlying binocular combination of light in the pupil pathway differs from that in the cortex. Here we extend this paradigm to compare binocular combination in different photoreceptor pathways that feed into the autonomic nervous system.
 
-Different classes of retinal photoreceptors, including cones, rods and melanopsin-containing intrinsically photosensitive retinal ganglion cells (ipRGCs), are directly involved in controlling and maintaining the size of the pupils.\textsuperscript{\protect\hyperlink{ref-Barrionuevo2014}{6}--\protect\hyperlink{ref-Woelders2018}{12}} The cones have been shown to drive the initial rapid constriction of the pupils,\textsuperscript{\protect\hyperlink{ref-Mathot2018}{13}} while the slower and longer activation of the ipRGCs shows their role in maintaining the constriction over a prolonged period of time and in regulating the post-illumination pupillary response.\textsuperscript{\protect\hyperlink{ref-Markwell2010}{14},\protect\hyperlink{ref-McDougal2010}{15}} The ipRGCs are a unique photoreceptor class that has been discovered recently.\textsuperscript{\protect\hyperlink{ref-Provencio2000}{16}} They express the photopigment melanopsin, and are involved in the regulation of the circadian rhythm,\textsuperscript{\protect\hyperlink{ref-Provencio2000}{16}--\protect\hyperlink{ref-Ruby2002}{18}} forming a major input to the PON.\textsuperscript{\protect\hyperlink{ref-Dacey2003}{19}} The first direct evidence of the involvement of the ipRGCs in the PLR was shown in melanopsin knockout rats by Lucas et al.~\textsuperscript{\protect\hyperlink{ref-Lucas2003}{20}}, resulting in the loss of the intrinsic photosensitivity of the cells and a reduced pupil constriction. This same behaviour was later also observed in primates and humans,\textsuperscript{\protect\hyperlink{ref-Gamlin2007}{21}} where it was demonstrated that the PLR continues during light presentation even when cone and rod signalling is blocked, indicating the primary role of the ipRGCs in maintaining pupil constriction over a prolonged time.
+Different classes of retinal photoreceptors, including cones, rods and melanopsin-containing intrinsically photosensitive retinal ganglion cells (ipRGCs), are directly involved in controlling and maintaining the size of the pupils\textsuperscript{\citeproc{ref-Barrionuevo2014}{6}--\citeproc{ref-Woelders2018}{12}}. The cones have been shown to drive the initial rapid constriction of the pupils\textsuperscript{\citeproc{ref-Mathot2018}{13}}, while the slower and longer activation of the ipRGCs shows their role in maintaining the constriction over a prolonged period of time and in regulating the post-illumination pupillary response\textsuperscript{\citeproc{ref-Markwell2010}{14},\citeproc{ref-McDougal2010}{15}}. The ipRGCs are a unique photoreceptor class that has been discovered recently\textsuperscript{\citeproc{ref-Provencio2000}{16}}. They express the photopigment melanopsin, and are involved in the regulation of the circadian rhythm\textsuperscript{\citeproc{ref-Provencio2000}{16}--\citeproc{ref-Ruby2002}{18}}, forming a major input to the PON\textsuperscript{\citeproc{ref-Dacey2003}{19}}. The first direct evidence of the involvement of the ipRGCs in the PLR was shown in melanopsin knockout rats by Lucas et al.\textsuperscript{\citeproc{ref-Lucas2003}{20}}, resulting in the loss of the intrinsic photosensitivity of the cells and a reduced pupil constriction. This same behaviour was later also observed in primates and humans\textsuperscript{\citeproc{ref-Gamlin2007}{21}}, where it was demonstrated that the PLR continues during light presentation even when cone and rod signalling is blocked, indicating the primary role of the ipRGCs in maintaining pupil constriction over a prolonged time.
 
-A technique known as silent substitution\textsuperscript{\protect\hyperlink{ref-Estevez1982}{22}} can be used to selectively stimulate specific photoreceptor classes. Silent substitution exploits the fact that each photoreceptor class has a distinct spectral tuning that overlaps with the others. Using a multiprimary system, in which the primaries (i.e.~LEDs) have different spectra, it is possible to target one class of photoreceptors while maintaining the others at a constant activity level, effectively silencing them.\textsuperscript{\protect\hyperlink{ref-Shapiro1996}{23},\protect\hyperlink{ref-Spitschan2018}{24}} Studies using silent substitution have shown that the pupils behave differently depending on which photoreceptor or pathway is being stimulated. For example, pupil responses have been shown to be out of phase when the S cones are stimulated, relative to when the ipRGCs or the L+M cones are stimulated.\textsuperscript{\protect\hyperlink{ref-Spitschan2014}{10},\protect\hyperlink{ref-Cao2015}{25}} Additionally, when L and M cones are stimulated individually, there appears to be a paradoxical pupil response: increments in L cone stimulation cause a constriction of the pupil, while increments in M cone stimulation lead to a dilation of the pupil,\textsuperscript{\protect\hyperlink{ref-Murray2018}{9},\protect\hyperlink{ref-Woelders2018}{12}} perhaps due to activity in the L-M opponent pathway.
+A technique known as silent substitution\textsuperscript{\citeproc{ref-Estevez1982}{22}} can be used to selectively stimulate specific photoreceptor classes. Silent substitution exploits the fact that each photoreceptor class has a distinct spectral tuning that overlaps with the others. Using a multiprimary system, in which the primaries (i.e.~LEDs) have different spectra, it is possible to target one class of photoreceptors while maintaining the others at a constant activity level, effectively silencing them\textsuperscript{\citeproc{ref-Shapiro1996}{23},\citeproc{ref-Spitschan2018}{24}, this paper also offers a clear explanation of how to implement silent substitution}. Studies using silent substitution have shown that the pupils behave differently depending on which photoreceptor or pathway is being stimulated. For example, pupil responses have been shown to be out of phase when the S cones are stimulated, relative to when the ipRGCs or the L+M cones are stimulated\textsuperscript{\citeproc{ref-Spitschan2014}{10},\citeproc{ref-Cao2015}{25}}. Additionally, when L and M cones are stimulated individually, there appears to be a paradoxical pupil response: increments in L cone stimulation cause a constriction of the pupil, while increments in M cone stimulation lead to a dilation of the pupil\textsuperscript{\citeproc{ref-Murray2018}{9},\citeproc{ref-Woelders2018}{12}}, perhaps due to activity in the L-M opponent pathway.
 
-Binocular combination has been extensively studied in visual perception, where it is mediated by neurons in primary visual cortex.\textsuperscript{\protect\hyperlink{ref-Hubel1962}{26},\protect\hyperlink{ref-Moradi2009}{27}} For pattern vision, binocular summation occurs at threshold, such that a lower contrast is required to detect a target shown to both eyes than a target shown to only one eye.\textsuperscript{\protect\hyperlink{ref-Baker2018}{28}--\protect\hyperlink{ref-Legge1984}{30}} At higher contrasts, a process of `ocularity invariance' is observed, in which the response to monocularly- and binocularly-presented patterns is equal.\textsuperscript{\protect\hyperlink{ref-Moradi2009}{27},\protect\hyperlink{ref-Baker2007}{31}--\protect\hyperlink{ref-Meese2006}{33}} This is thought to be due to a process of interocular suppression that compensates for the additional excitatory drive caused by stimulating two eyes. Our recent work\textsuperscript{\protect\hyperlink{ref-Segala2023}{5}} has shown that cortical signal combination for luminance flicker is substantially more linear than for spatial patterns, whereas there is evidence of interocular suppression in the pupil pathway.
+Binocular combination has been extensively studied in visual perception, where it is mediated by neurons in primary visual cortex\textsuperscript{\citeproc{ref-Hubel1962}{26},\citeproc{ref-Moradi2009}{27}}. For pattern vision, binocular summation occurs at threshold, such that a lower contrast is required to detect a target shown to both eyes than a target shown to only one eye\textsuperscript{\citeproc{ref-Baker2018}{28}--\citeproc{ref-Legge1984}{30}}. At higher contrasts, a process of `ocularity invariance' is observed, in which the response to monocularly- and binocularly-presented patterns is equal\textsuperscript{\citeproc{ref-Moradi2009}{27},\citeproc{ref-Baker2007}{31}--\citeproc{ref-Meese2006}{33}}. This is thought to be due to a process of interocular suppression that compensates for the additional excitatory drive caused by stimulating two eyes. Our recent work\textsuperscript{\citeproc{ref-Segala2023}{5}} has shown that cortical signal combination for luminance flicker is substantially more linear than for spatial patterns, whereas there is evidence of interocular suppression in the pupil pathway.
 
-Most studies that use silent substitution to investigate the PLR stimulate only one eye. If the stimulated eye is pharmacologically dilated to control pupil size, the response from the unstimulated eye (known as the consensual response) can be recorded.\textsuperscript{\protect\hyperlink{ref-Spitschan2014}{10},\protect\hyperlink{ref-McDougal2010}{15}} While this approach controls the total amount of light incident at the retina, it does not permit investigation of binocular combination for specific photoreceptor pathways. Here we take a different approach, using a custom binocular multiprimary system (see Figure \ref{fig:spectraplots}a,b) that can modulate each (undilated) eye independently, and a binocular eye tracker to measure the diameter of both pupils. We measure the amplitude of pupil modulation (using Fourier analysis) in response to sinusoidal stimulation at 0.5Hz, for stimuli directed at the luminance pathway, L-M cone pathway, S-cone pathway, and melanopsin pathway (see Figure \ref{fig:spectraplots}e-l). Our key comparisons are between monocular and binocular stimulation, and between monocular stimulation and a dichoptic masking condition in which the two eyes are stimulated at different frequencies (0.5 and 0.4Hz). The results are interpreted using a contemporary model of binocular vision\textsuperscript{\protect\hyperlink{ref-Meese2006}{33}} implemented within a hierarchical Bayesian framework.
+Most studies that use silent substitution to investigate the PLR stimulate only one eye. If the stimulated eye is pharmacologically dilated to control pupil size, the response from the unstimulated eye (known as the consensual response) can be recorded\textsuperscript{\citeproc{ref-Spitschan2014}{10},e.g. \citeproc{ref-McDougal2010}{15}}. While this approach controls the total amount of light incident at the retina, it does not permit investigation of binocular combination for specific photoreceptor pathways. Here we take a different approach, using a custom binocular multiprimary system (see Figure \ref{fig:spectraplots}a,b) that can modulate each (undilated) eye independently, and a binocular eye tracker to measure the diameter of both pupils. We measure the amplitude of pupil modulation (using Fourier analysis) in response to sinusoidal stimulation at 0.5Hz, for stimuli directed at the luminance pathway, L-M cone pathway, S-cone pathway, and melanopsin pathway (see Figure \ref{fig:spectraplots}e-l). Our key comparisons are between monocular and binocular stimulation, and between monocular stimulation and a dichoptic masking condition in which the two eyes are stimulated at different frequencies (0.5 and 0.4Hz). The results are interpreted using a contemporary model of binocular vision\textsuperscript{\citeproc{ref-Meese2006}{33}} implemented within a hierarchical Bayesian framework.
 
-\hypertarget{results}{%
-\section{Results}\label{results}}
+\section{Results}\label{results}
 
 Figure \ref{fig:spectraplots}m-p shows averaged waveforms of pupil diameter in response to binocular stimulation. For luminance stimuli (Figure \ref{fig:spectraplots}m) a strong modulation is apparent at the stimulation frequency (0.5Hz), which is also clear in the Fourier amplitude spectrum (Figure \ref{fig:spectraplots}q). For binocular stimulation of the L-M pathway, S-cone pathway and melanopsin pathway, pupil modulations were less than 10\% of the amplitude of the luminance modulation (note the change in y-axis scale for the Fourier spectra), but still apparent at 0.5Hz in the Fourier spectra (Figure \ref{fig:spectraplots}n-p). We also observed a second harmonic response (at 1Hz) for all conditions, which was weaker than the first harmonic for luminance and melanopsin stimulation, but stronger for L-M and S-cone stimulation. The second harmonic is also apparent in the pupil waveforms shown in Figure \ref{fig:spectraplots}n-p.~Our main analysis therefore focuses on the amplitude of the pupil modulations at both the first and second harmonic frequencies across different stimulus conditions.
 
@@ -149,9 +186,9 @@ Figure \ref{fig:FirstHarmonicPlots}a-d shows contrast response functions across 
 \caption{Contrast response functions for pupil modualations in response to flicker at 0.5Hz (panels a-d), and 0.4Hz (panels f-i), and posterior parameter distributions for the weight of interocular suppression (panel e). Within each panel (except panel e), data points are the coherently averaged amplitudes for each condition, and error bars indicate bootstrapped 95\% confidence intervals. Curves show model fits using the maximum a posteriori (MAP) parameter values (see Table 1). In panel (e), vertical lines show the MAP estimates, and the thin black curve indicates the prior (note the logarithmic x-axis).}\label{fig:FirstHarmonicPlots}
 \end{figure}
 
-In contemporary models of binocular signal combination, the amount of binocular facilitation is determined by the magnitude of interocular suppression, with strong suppression reducing facilitation.\textsuperscript{\protect\hyperlink{ref-Kingdom2015}{34}} We can estimate the strength of interocular suppression by measuring how much monocular responses are reduced when a dichoptic `mask' is shown to the other eye. In our paradigm, the two components flickered at different frequencies (0.5 and 0.4Hz) so that their responses remained distinct in the Fourier spectrum.\textsuperscript{\protect\hyperlink{ref-Busse2009}{35}} The yellow diamond symbols in Figure \ref{fig:FirstHarmonicPlots}a-d show the target responses in this condition, and in most cases were weaker than the monocular responses (red circles). The strongest dichoptic masking is found in the L-M condition, where we also observed the binocular suppression effect. Suppression can also be estimated from the responses at 0.4Hz (Figure \ref{fig:FirstHarmonicPlots}f-i). The reduced amplitude in the binocular cross condition (where the two eyes received different temporal frequencies; purple squares) relative to the 0.4Hz monocular condition (grey circles), and the progressive decline in amplitude of the dichoptic cross response (yellow diamonds) also differ across photoreceptor conditions, showing similar differences to those observed at 0.5Hz.
+In contemporary models of binocular signal combination, the amount of binocular facilitation is determined by the magnitude of interocular suppression, with strong suppression reducing facilitation\textsuperscript{\citeproc{ref-Kingdom2015}{34}}. We can estimate the strength of interocular suppression by measuring how much monocular responses are reduced when a dichoptic `mask' is shown to the other eye. In our paradigm, the two components flickered at different frequencies (0.5 and 0.4Hz) so that their responses remained distinct in the Fourier spectrum\textsuperscript{e.g. \citeproc{ref-Busse2009}{35}}. The yellow diamond symbols in Figure \ref{fig:FirstHarmonicPlots}a-d show the target responses in this condition, and in most cases were weaker than the monocular responses (red circles). The strongest dichoptic masking is found in the L-M condition, where we also observed the binocular suppression effect. Suppression can also be estimated from the responses at 0.4Hz (Figure \ref{fig:FirstHarmonicPlots}f-i). The reduced amplitude in the binocular cross condition (where the two eyes received different temporal frequencies; purple squares) relative to the 0.4Hz monocular condition (grey circles), and the progressive decline in amplitude of the dichoptic cross response (yellow diamonds) also differ across photoreceptor conditions, showing similar differences to those observed at 0.5Hz.
 
-To estimate the extent of interocular suppression for each photoreceptor pathway, we fitted each data set using a Bayesian hierarchical implementation of a simple binocular combination model.\textsuperscript{\protect\hyperlink{ref-Segala2023}{5},\protect\hyperlink{ref-Meese2006}{33}} Our primary objective was to compare posterior distributions of the weight of interocular suppression, which are shown in Figure \ref{fig:FirstHarmonicPlots}e. Consistent with our earlier observations, the strongest suppressive weight corresponds to the L-M and Melanopsin conditions, and the weakest suppression corresponds to the luminance and S-cone conditions, with virtually no overlap between the posterior distributions for weak and strong suppression. The model fits were of good quality, as shown by the curves in Figure \ref{fig:FirstHarmonicPlots}a-d,f-i. The fitted model parameters are given in Table \ref{tab:paramtable}.
+To estimate the extent of interocular suppression for each photoreceptor pathway, we fitted each data set using a Bayesian hierarchical implementation of a simple binocular combination model\textsuperscript{\citeproc{ref-Segala2023}{5},\citeproc{ref-Meese2006}{33}}. Our primary objective was to compare posterior distributions of the weight of interocular suppression, which are shown in Figure \ref{fig:FirstHarmonicPlots}e. Consistent with our earlier observations, the strongest suppressive weight corresponds to the L-M and Melanopsin conditions, and the weakest suppression corresponds to the luminance and S-cone conditions, with virtually no overlap between the posterior distributions for weak and strong suppression. The model fits were of good quality, as shown by the curves in Figure \ref{fig:FirstHarmonicPlots}a-d,f-i. The fitted model parameters are given in Table \ref{tab:paramtable}.
 
 \begin{table}[H]
 
@@ -185,7 +222,7 @@ At the second harmonic frequencies, the levels of suppression were more uniform 
 \caption{Responses at the second harmonic frequencies (1Hz and 0.8Hz), in the same format as Figure 2.}\label{fig:SecondHarmonicPlots}
 \end{figure}
 
-Finally, we inspected the response phase of our four stimulation conditions, given previous reports that these differ across pathways,\textsuperscript{\protect\hyperlink{ref-Spitschan2014}{10}} and may be in antiphase for melanopsin and S-cone signals. Figure \ref{fig:phaseplots} shows the phase angles for the first (a) and second (b) harmonic frequencies for binocular stimulation (monocular stimulation produced very similar results). At the first harmonic, melanopsin and S-cone signals differed in phase by more than 90 degrees, though they were not fully in antiphase. The luminance and L-M responses were approximately in antiphase to each other, however this is likely due to our choice to modulate L+M- in the first half-cycle of the sine wave (corresponding to a luminance increase in the luminance condition), and L-M+ in the second half-cycle (corresponding to a luminance decrease in the luminance condition). Had we reversed this phase arrangement, we would likely have seen a close phase correspondence between the L-M and luminance conditions (another way to think about this is that L-cone decreases and M-cone increases are processed like luminance increases). Phase differences between the luminance, S-cone and melanopsin conditions are likely attributable to different lags in phototransduction at the earliest stage (i.e.~in the retina). At the second harmonic frequency (Figure \ref{fig:phaseplots}b), the luminance condition was again out of phase with the other three, and was approximately in quadrature phase with the L-M condition, and in antiphase with both the S-cone and melanopsin conditions (which were in phase with each other).
+Finally, we inspected the response phase of our four stimulation conditions, given previous reports that these differ across pathways\textsuperscript{\citeproc{ref-Spitschan2014}{10}}, and may be in antiphase for melanopsin and S-cone signals. Figure \ref{fig:phaseplots} shows the phase angles for the first (a) and second (b) harmonic frequencies for binocular stimulation (monocular stimulation produced very similar results). At the first harmonic, melanopsin and S-cone signals differed in phase by more than 90 degrees, though they were not fully in antiphase. The luminance and L-M responses were approximately in antiphase to each other, however this is likely due to our choice to modulate L+M- in the first half-cycle of the sine wave (corresponding to a luminance increase in the luminance condition), and L-M+ in the second half-cycle (corresponding to a luminance decrease in the luminance condition). Had we reversed this phase arrangement, we would likely have seen a close phase correspondence between the L-M and luminance conditions (another way to think about this is that L-cone decreases and M-cone increases are processed like luminance increases). Phase differences between the luminance, S-cone and melanopsin conditions are likely attributable to different lags in phototransduction at the earliest stage (i.e.~in the retina). At the second harmonic frequency (Figure \ref{fig:phaseplots}b), the luminance condition was again out of phase with the other three, and was approximately in quadrature phase with the L-M condition, and in antiphase with both the S-cone and melanopsin conditions (which were in phase with each other).
 
 \begin{figure}
 
@@ -196,64 +233,56 @@ Finally, we inspected the response phase of our four stimulation conditions, giv
 \caption{Pupil phase plots at the first and second harmonic frequencies for the luminance, melanopsin, L-M pathway and the S-(L+M) pathway conditions. Panel (a) shows the pupil response at the first harmonic frequency during binocular stimulation. Panel (b) shows the pupil response at the second harmonic frequency during binocular stimulation. The five data points for each pathway correspond to the five contrast levels displayed. In panel (a) the luminance amplitudes have been scaled down by a factor of 10 to enable comparison with the other conditions.}\label{fig:phaseplots}
 \end{figure}
 
-\hypertarget{discussion}{%
-\section{Discussion}\label{discussion}}
+\section{Discussion}\label{discussion}
 
 We used binocular pupillometry and silent substitution to measure monocular and binocular responses of the pupils to flickering stimuli when stimulating specific photoreceptor pathways. In all four experiments, we were able to record contrast response functions at both the first and the second harmonic frequencies. All experiments showed that binocular combination in the autonomic nervous system happens in a non-linear manner, with evidence of different magnitudes of interocular suppression depending on the photoreceptor pathway. This pattern of results was confirmed by a computational model, which allowed us to compare the weight of interocular suppression for each pathway. We found that at the first harmonic frequency the L-M and melanopsin pathways involved strong suppression, whereas the luminance and S-cone pathways involved weaker suppression. Suppression was strong in all four pathways at the second harmonic frequency. Finally, the phase of the pupil response revealed different lag times for the different pathways at the first and second harmonic frequencies.
 
-This is the first study to investigate binocular interactions in the melanopsin pathway directly. A previous meta-analysis\textsuperscript{\protect\hyperlink{ref-Spitschan2019}{11}} indicated that there may be a substantial binocular facilitation effect in the circadian pathway, as indexed by melatonin suppression (melatonin is a hormone released by the pineal gland; its production is suppressed by exposure to bright light, particularly when the melanopsin-containing ipRGCs are stimulated). In brief, monocular stimulation of the ipRGCs requires up to ten times the signal strength to produce an equivalent effect to binocular stimulation. This superadditive effect implies an absence of interocular suppression, and perhaps the presence of either a highly compressive nonlinearity, or an AND-style neural operation. Our findings here are very different - we do not see substantial binocular facilitation effects in response to melanopsin modulation, and our data indicate that interocular suppression is very strong. Moreover, by measuring the full contrast response function, we can rule out compressive nonlinearities, because the functions accelerate at both the first and second harmonic frequencies. The explanation for this difference could be due to different anatomical pathways. Binocular combination in the circadian system likely takes place in the suprachiasmatic nucleus, whereas in the pupil constriction circuit the Edinger-Westphal nucleus is the most likely site of binocular integration.\textsuperscript{\protect\hyperlink{ref-Mathot2018}{13}} Presumably these anatomical differences, and the practical constraints of the two systems, lead to differences in response.
+This is the first study to investigate binocular interactions in the melanopsin pathway directly. A previous meta-analysis\textsuperscript{\citeproc{ref-Spitschan2019}{11}} indicated that there may be a substantial binocular facilitation effect in the circadian pathway, as indexed by melatonin suppression (melatonin is a hormone released by the pineal gland; its production is suppressed by exposure to bright light, particularly when the melanopsin-containing ipRGCs are stimulated). In brief, monocular stimulation of the ipRGCs requires up to ten times the signal strength to produce an equivalent effect to binocular stimulation. This superadditive effect implies an absence of interocular suppression, and perhaps the presence of either a highly compressive nonlinearity, or an AND-style neural operation. Our findings here are very different - we do not see substantial binocular facilitation effects in response to melanopsin modulation, and our data indicate that interocular suppression is very strong. Moreover, by measuring the full contrast response function, we can rule out compressive nonlinearities, because the functions accelerate at both the first and second harmonic frequencies. The explanation for this difference could be due to different anatomical pathways. Binocular combination in the circadian system likely takes place in the suprachiasmatic nucleus, whereas in the pupil constriction circuit the Edinger-Westphal nucleus is the most likely site of binocular integration\textsuperscript{\citeproc{ref-Mathot2018}{13}}. Presumably these anatomical differences, and the practical constraints of the two systems, lead to differences in response.
 
-Our recent psychophysical work\textsuperscript{\protect\hyperlink{ref-Baker2024}{36}} has looked at binocular interactions in the L-M and S-cone pathways, and compared these to the luminance pathway. Using a contrast discrimination paradigm with spatial modulations of luminance and colour, we found equally strong interocular suppression in all three pathways. This is rather different from our pupillometry results here, which demonstrate weaker suppression in the luminance and S-cone pathways than in the L-M pathway (see Figure \ref{fig:FirstHarmonicPlots}). However, the current experiments involve temporal modulations, which are quite distinct from the spatial modulations used in our previous work.\textsuperscript{\protect\hyperlink{ref-Baker2024}{36}} Our other recent work\textsuperscript{\protect\hyperlink{ref-Segala2023}{5}} has shown that temporal luminance modulations involve much weaker interocular suppression in the cortical response than do spatial luminance modulations.\textsuperscript{\protect\hyperlink{ref-Baker2017}{37}} These different normalization processes might reflect different priorities for spatial and temporal vision. Spatial vision aims to fuse images to provide binocular single vision, and benefits from `ocularity invariance',\textsuperscript{\protect\hyperlink{ref-Baker2007}{31}} in which visual appearance is constant when viewed with one eye or two. Temporal vision is critical for motion perception, which can involve alternative binocular computations, such as calculating velocity differences between the eyes.\textsuperscript{\protect\hyperlink{ref-Kaestner2019}{38}} Of course the present measurements were of pupil size, which may be subject to different anatomical and functional constraints from those in the cortex. Future research should aim to extend our current findings to perception using psychophysical approaches.
+Our recent psychophysical work\textsuperscript{\citeproc{ref-Baker2024}{36}} has looked at binocular interactions in the L-M and S-cone pathways, and compared these to the luminance pathway. Using a contrast discrimination paradigm with spatial modulations of luminance and colour, we found equally strong interocular suppression in all three pathways. This is rather different from our pupillometry results here, which demonstrate weaker suppression in the luminance and S-cone pathways than in the L-M pathway (see Figure \ref{fig:FirstHarmonicPlots}). However, the current experiments involve temporal modulations, which are quite distinct from the spatial modulations used in our previous work\textsuperscript{\citeproc{ref-Baker2024}{36}}. Our other recent work\textsuperscript{\citeproc{ref-Segala2023}{5}} has shown that temporal luminance modulations involve much weaker interocular suppression in the cortical response than do spatial luminance modulations\textsuperscript{\citeproc{ref-Baker2017}{37}}. These different normalization processes might reflect different priorities for spatial and temporal vision. Spatial vision aims to fuse images to provide binocular single vision, and benefits from `ocularity invariance'\textsuperscript{\citeproc{ref-Baker2007}{31}}, in which visual appearance is constant when viewed with one eye or two. Temporal vision is critical for motion perception, which can involve alternative binocular computations, such as calculating velocity differences between the eyes\textsuperscript{\citeproc{ref-Kaestner2019}{38}}. Of course the present measurements were of pupil size, which may be subject to different anatomical and functional constraints from those in the cortex. Future research should aim to extend our current findings to perception using psychophysical approaches.
 
-\hypertarget{conclusions}{%
-\section{Conclusions}\label{conclusions}}
+\section{Conclusions}\label{conclusions}
 
 We have demonstrated that binocular combination of temporal flickering light in the autonomic nervous system depends on the photoreceptor pathway. We were able to elicit pupil responses by stimulating the periphery of the retina and we were able to record contrast response functions for all photoreceptor pathways. While all pathways showed non-linear combination, they varied in how the signals are combined, particularly in the weight of interocular suppression. This was strong (\(\omega \ge 1\)) for L-M and melanopsin signals at the first harmonic, and all pathways at the second harmonic. Suppression was weaker (\(\omega < 1\)) in the luminance pathway (consistent with previous work), and also for S-cone directed modulations.
 
-\hypertarget{methods}{%
-\section{Methods}\label{methods}}
+\section{Methods}\label{methods}
 
-\hypertarget{participants}{%
-\subsection{Participants}\label{participants}}
+\subsection{Participants}\label{participants}
 
 Twenty-four participants were recruited for each of the four experiments for a total of ninety-six adult participants (28 male, 68 female), whose ages ranged from 18 to 41. All participants had normal or corrected to normal vision, no known abnormalities of binocular or colour vision, and gave written informed consent. Our procedures were approved by the Ethics Committee of the Department of Psychology at the University of York (identification number 184).
 
-\hypertarget{apparatus-stimuli}{%
-\subsection{Apparatus \& stimuli}\label{apparatus-stimuli}}
+\subsection{Apparatus \& stimuli}\label{apparatus-stimuli}
 
-To present synchronised stimulus modulations independently to each eye, two light engines (SpectraTuneLAB: LEDMOTIVE Technologies, LLC, Barcelona, Spain), each with 10 independently addressable LED colour channels, were integrated into a customised viewing system. The light engines were operated via a Python interface to their REST API,\textsuperscript{\protect\hyperlink{ref-Martin2022}{39}} which supports synchronous launch and playback of spectral sequences prepared in advance and stored in JSON format. When preparing the spectral sequences, the age of participants was used to account for the yellowing of the lenses. We calculated silent substitution solutions using the \emph{PySilSub} toolbox,\textsuperscript{\protect\hyperlink{ref-Martin2023}{40}} using linear algebra. The outputs of the two light engines (see Figure \ref{fig:spectraplots}b,c) were calibrated using an Ocean Optics Jaz spectroradiometer, which was wavelength-calibrated to an Argon lamp and intensity calibrated using a NIST-traceable light source. We used the Stockman and Sharpe 10-degree cone fundamentals,\textsuperscript{\protect\hyperlink{ref-Stockman2000}{41}} and estimates of melanopsin absorbance spectra from CIE S 026\textsuperscript{\protect\hyperlink{ref-Martin2023}{40}} to calculate \(\alpha\)-opic irradiance.
+To present synchronised stimulus modulations independently to each eye, two light engines (SpectraTuneLAB: LEDMOTIVE Technologies, LLC, Barcelona, Spain), each with 10 independently addressable LED colour channels, were integrated into a customised viewing system. The light engines were operated via a Python interface to their REST API\textsuperscript{\citeproc{ref-Martin2022}{39}}, which supports synchronous launch and playback of spectral sequences prepared in advance and stored in JSON format. When preparing the spectral sequences, the age of participants was used to account for the yellowing of the lenses. We calculated silent substitution solutions using the \emph{PySilSub} toolbox\textsuperscript{\citeproc{ref-Martin2023}{40}}, using linear algebra. The outputs of the two light engines (see Figure \ref{fig:spectraplots}b,c) were calibrated using an Ocean Optics Jaz spectroradiometer, which was wavelength-calibrated to an Argon lamp and intensity calibrated using a NIST-traceable light source. We used the Stockman and Sharpe 10-degree cone fundamentals\textsuperscript{\citeproc{ref-Stockman2000}{41}}, and estimates of melanopsin absorbance spectra from CIE S 026\textsuperscript{discussed in \citeproc{ref-Martin2023}{40}} to calculate \(\alpha\)-opic irradiance.
 
 The output from the light engines was directed through liquid light guides (LLG3-8H: Thorlabs Ltd, Cambridgeshire, UK) and diffused onto semi-opaque and highly diffusive white glass discs with a diameter of 50 mm for even illumination (34-473: Edmund Optics, York, UK). The light guide gaskets were butt-coupled to the light engine diffusers with threaded adapters (SM1A9, AD3LLG: Thorlabs Ltd, Cambridgeshire, UK) and the exiting ends of the light guides were mated with 51 mm depth optical cylinders (SM2L20: Thorlabs Ltd, Cambridgeshire, UK) via appropriately threaded adapters (AD3LLG, SM2A6: Thorlabs Ltd, Cambridgeshire, UK). The stimulus diffuser discs were retained at the front end of the optical cylinders approximately 51 mm from the light source, at which distance the output beam was sufficiently dispersed to afford even illumination of the diffuser when viewed from the front. To guarantee safe illumination levels, a circular neutral-density filter with the same diameter of the white glass discs (50 mm) and an optical density of 0.6 log units was placed in the optical path between the light source and the diffusers. A small circular piece of blackout material with a diameter of approximately 8 degrees (10 mm) was positioned centrally on the front of each diffuser disc to aid as a fusion lock, as a fixation point, and to occlude the fovea.
 
-The diffuser discs were positioned in the objective planes of the lenses of a modified VR headset (SHINECON SC-G01, Dongguan Shinecon Industrial Co.~Ltd., Guangdong, China), which was used by the participants to view the stimuli. The stimuli were two discs of flickering light with a diameter of approximately 30 degrees, which were fused together into a cyclopean percept resembling a donut-shaped ring of light, similar to that used in other studies.\textsuperscript{\protect\hyperlink{ref-Murray2018}{9},\protect\hyperlink{ref-Spitschan2014}{10},\protect\hyperlink{ref-Barrionuevo2016}{42}--\protect\hyperlink{ref-Zele2018}{44}} The VR headset modifications allowed for small adjustments to account for individual differences in interpupillary distance and focal length. The use of this set up allowed us to modulate the stimuli in three different ocular configurations, similar to the ones we used in our previous study:\textsuperscript{\protect\hyperlink{ref-Segala2023}{5}} monocular, binocular and dichoptic. In the monocular configuration, the unstimulated eye still saw a non-flickering disc of mean luminance. A schematic of the stimulation system is shown in Figure \ref{fig:spectraplots}a. Pupillometry data were collected using a binocular Pupil Core eye-tracker headset (Pupil Labs GmbH, Berlin, Germany)\textsuperscript{\protect\hyperlink{ref-Kassner2014}{45}} running at 120 Hz, and the signals were recorded with the Pupil Capture software.
+The diffuser discs were positioned in the objective planes of the lenses of a modified VR headset (SHINECON SC-G01, Dongguan Shinecon Industrial Co.~Ltd., Guangdong, China), which was used by the participants to view the stimuli. The stimuli were two discs of flickering light with a diameter of approximately 30 degrees, which were fused together into a cyclopean percept resembling a donut-shaped ring of light, similar to that used in other studies\textsuperscript{\citeproc{ref-Murray2018}{9},\citeproc{ref-Spitschan2014}{10},e.g., \citeproc{ref-Barrionuevo2016}{42},\citeproc{ref-Spitschan2015}{43},\citeproc{ref-Zele2018}{44}}. The VR headset modifications allowed for small adjustments to account for individual differences in interpupillary distance and focal length. The use of this set up allowed us to modulate the stimuli in three different ocular configurations, similar to the ones we used in our previous study\textsuperscript{\citeproc{ref-Segala2023}{5}}: monocular, binocular and dichoptic. In the monocular configuration, the unstimulated eye still saw a non-flickering disc of mean luminance. A schematic of the stimulation system is shown in Figure \ref{fig:spectraplots}a. Pupillometry data were collected using a binocular Pupil Core eye-tracker headset (Pupil Labs GmbH, Berlin, Germany)\textsuperscript{\citeproc{ref-Kassner2014}{45}} running at 120 Hz, and the signals were recorded with the Pupil Capture software.
 
-Our previous study\textsuperscript{\protect\hyperlink{ref-Segala2023}{5}} used a temporal frequency of 2Hz for foveal luminance flicker, and recorded EEG data simultaneously with pupillometry. Initial pilot experiments indicated that this frequency was too high to elicit measurable responses when stimulating individual photoreceptor pathways. For all experiments, we therefore used a primary flicker frequency of 0.5Hz, as previous literature showed that this was slow enough to elicit a pupil response from all photoreceptor classes.\textsuperscript{\protect\hyperlink{ref-Spitschan2014}{10}} We also focussed on only recording pupillometry data as this frequency would be too slow to elicit steady-state EEG responses.\textsuperscript{\protect\hyperlink{ref-Norcia2015}{46}}
+Our previous study\textsuperscript{\citeproc{ref-Segala2023}{5}} used a temporal frequency of 2Hz for foveal luminance flicker, and recorded EEG data simultaneously with pupillometry. Initial pilot experiments indicated that this frequency was too high to elicit measurable responses when stimulating individual photoreceptor pathways. For all experiments, we therefore used a primary flicker frequency of 0.5Hz, as previous literature showed that this was slow enough to elicit a pupil response from all photoreceptor classes\textsuperscript{\citeproc{ref-Spitschan2014}{10}}. We also focussed on only recording pupillometry data as this frequency would be too slow to elicit steady-state EEG responses\textsuperscript{\citeproc{ref-Norcia2015}{46}}.
 
 For all experiments, sinusoidal temporal modulations were presented against the same background spectrum (matched between the eyes), which was used to achieve silent substitution in the three photoreceptor modulation experiments. The background spectra were defined by setting all channels to half maximum output for the brighter of the two devices (STLab 1, left eye) and then using the STLab 1/STLab 2 calibration ratio to find the equivalent settings for the companion device (STLab 2, right eye). The background spectrum illuminance was approximately 74 lux, or 68.5 cd/m\(^2\). The spectral power distributions and \(\alpha\)-opic irradiances of the background spectra for both eyes are shown in Figure \ref{fig:spectraplots}c-d.
 
-In the luminance experiment, the stimulus intensity was increased and decreased relative to the background, which we expected to modulate all photoreceptor classes (see Figure \ref{fig:spectraplots}e,i). In the L-M cone modulation experiment, we used silent substution to increase the L-cone activity, and simultaneously decrease the M-cone activity, during the first half-cycle of the sine wave. In the second half-cycle the polarity of the modulation reversed (see Figure \ref{fig:spectraplots}f,j). The maximum available L-M contrast was approximately 10\%. In the S-cone modulation experiment, we increased and decreased S-cone-directed signals, whilst keeping activity in the other photoreceptors constant (see Figure \ref{fig:spectraplots}g,k). Our system allowed a maximum contrast of 45\%. Finally, in the melanopsin experiment, we modulated the activity of the melanopsin-containing intrinsically photoreceptive retinal ganglion cells, whilst keeping cone activity constant (see Figure \ref{fig:spectraplots}h,l). The maximum available melanopsin contrast was 22\%. We assume that the activity of rods was constant at the high background luminance intensity used here, and so did not attempt to silence rod activity in any condition, as this would have greatly reduced the available dynamic range. Splatter on nominally silenced photoreceptors was very small (see Figure \ref{fig:spectraplots}j-l), well below the levels that would be expected to generate measureable pupil modulations. We also estimated activation of penumbral L and M cones,\textsuperscript{\protect\hyperlink{ref-Barrionuevo2016}{42},\protect\hyperlink{ref-Spitschan2015}{43},\protect\hyperlink{ref-Zele2019}{47}} which was minimal (\(\le 1.5%
-\) contrast; less than splatter on the open-field cones) for melanopsin-directed stimuli. We note that the temporal frequency of our modulation (0.5Hz) is well below the range where penumbral cone activation can elicit visible percepts, and that such percepts fade after around 1 second,\textsuperscript{\protect\hyperlink{ref-Spitschan2015}{43}} and do not typically affect pupil responses.\textsuperscript{\protect\hyperlink{ref-Spitschan2014}{10}}
+In the luminance experiment, the stimulus intensity was increased and decreased relative to the background, which we expected to modulate all photoreceptor classes (see Figure \ref{fig:spectraplots}e,i). In the L-M cone modulation experiment, we used silent substution to increase the L-cone activity, and simultaneously decrease the M-cone activity, during the first half-cycle of the sine wave. In the second half-cycle the polarity of the modulation reversed (see Figure \ref{fig:spectraplots}f,j). The maximum available L-M contrast was approximately 10\%. In the S-cone modulation experiment, we increased and decreased S-cone-directed signals, whilst keeping activity in the other photoreceptors constant (see Figure \ref{fig:spectraplots}g,k). Our system allowed a maximum contrast of 45\%. Finally, in the melanopsin experiment, we modulated the activity of the melanopsin-containing intrinsically photoreceptive retinal ganglion cells, whilst keeping cone activity constant (see Figure \ref{fig:spectraplots}h,l). The maximum available melanopsin contrast was 22\%. We assume that the activity of rods was constant at the high background luminance intensity used here, and so did not attempt to silence rod activity in any condition, as this would have greatly reduced the available dynamic range. Splatter on nominally silenced photoreceptors was very small (see Figure \ref{fig:spectraplots}j-l), well below the levels that would be expected to generate measureable pupil modulations. We also estimated activation of penumbral L and M cones\textsuperscript{\citeproc{ref-Barrionuevo2016}{42},\citeproc{ref-Spitschan2015}{43},\citeproc{ref-Zele2019}{47}}, which was minimal (\(\le 1.5%
+\) contrast; less than splatter on the open-field cones) for melanopsin-directed stimuli. We note that the temporal frequency of our modulation (0.5Hz) is well below the range where penumbral cone activation can elicit visible percepts, and that such percepts fade after around 1 second\textsuperscript{\citeproc{ref-Spitschan2015}{43}}, and do not typically affect pupil responses\textsuperscript{\citeproc{ref-Spitschan2014}{10}}.
 
-\hypertarget{procedure}{%
-\subsection{Procedure}\label{procedure}}
+\subsection{Procedure}\label{procedure}
 
-Before the start of each experiment, participants adjusted the objective planes of the lenses with the help of the experimenter until the stimulus was in focus and they perceived the two pieces of blackout material as one fused disc. Pupil responses to binocular temporal contrast modulations were examined in a factorial design that combined six ocular conditions and five temporal contrast levels: 6, 12, 24, 48 and 96\% of the available dynamic range. This design, similar to that used in our previous studies,\textsuperscript{\protect\hyperlink{ref-Segala2023}{5},\protect\hyperlink{ref-Baker2017}{37},\protect\hyperlink{ref-Baker2020}{48}} was applied in four separate experiments, each with a different mode of photoreceptor stimulation. In the first three conditions, the discs flickered at 0.5 Hz, in either a monocular, binocular or dichoptic arrangement. In the dichoptic condition the non-target eye saw a flickering fixed contrast of 48\% of the available dynamic range. In the remaining three conditions (the cross-frequency conditions) one eye's disc flickered at 0.4 Hz, and the other eye's disc flickered at 0.5 Hz. This included monocular responses at 0.4 Hz, as well as binocular (one eye sees each frequency at the target contrast) and dichoptic (target stimulus flickering at 0.5 Hz, mask contrast of 48\% at 0.4 Hz in the other eye) arrangements. We counterbalanced presentation of the target stimulus across the left and right eyes.
+Before the start of each experiment, participants adjusted the objective planes of the lenses with the help of the experimenter until the stimulus was in focus and they perceived the two pieces of blackout material as one fused disc. Pupil responses to binocular temporal contrast modulations were examined in a factorial design that combined six ocular conditions and five temporal contrast levels: 6, 12, 24, 48 and 96\% of the available dynamic range. This design, similar to that used in our previous studies\textsuperscript{\citeproc{ref-Segala2023}{5},\citeproc{ref-Baker2017}{37},\citeproc{ref-Baker2020}{48}}, was applied in four separate experiments, each with a different mode of photoreceptor stimulation. In the first three conditions, the discs flickered at 0.5 Hz, in either a monocular, binocular or dichoptic arrangement. In the dichoptic condition the non-target eye saw a flickering fixed contrast of 48\% of the available dynamic range. In the remaining three conditions (the cross-frequency conditions) one eye's disc flickered at 0.4 Hz, and the other eye's disc flickered at 0.5 Hz. This included monocular responses at 0.4 Hz, as well as binocular (one eye sees each frequency at the target contrast) and dichoptic (target stimulus flickering at 0.5 Hz, mask contrast of 48\% at 0.4 Hz in the other eye) arrangements. We counterbalanced presentation of the target stimulus across the left and right eyes.
 
 The experiments were conducted in a windowless room, in which the only source of light was the modified VR headset. The participants sat as close as possible to the VR headset, leaving enough space for the eye-tracker to record the eyes. Each experiment was carried out in a single session of around 45-60 minutes, divided into three blocks of 15-17 minutes each. In each block, there were a total of 60 trials lasting 15 seconds each (12s of stimulus presentation, followed by 3s of interstimulus interval). The participants were given no task other than look at the black fixation dot while trying to minimise their blinking during the presentation period. For all experiments other than the luminance condition, participants adapted to the unmodulated background luminance for two minutes before stimulation began.
 
-Before the start of the L-M experiment, participants completed a luminance nulling perceptual calibration procedure in L-M cone space on an Iiyama \(\textrm{VisionMaster}^{\textrm{TM}}\) Pro 510 display (800 x 600 pixels, 60 Hz refresh rate). During the task, participants were presented with a disc flickering within the L-M cone space (between magenta and cyan). Using a trackball, participants adjusted the angle in cone space to find their subjective isoluminant point, which resulted in changing the flickering intensity of the stimulus until the amplitude of the flicker appeared to be minimised. The result was used to modify the requested contrasts during stimulus preparation so as to account for individual differences affecting perceived illuminance, principally the L:M cone ratio.\textsuperscript{\protect\hyperlink{ref-Carroll2002}{49},\protect\hyperlink{ref-Hofer2005}{50}}
+Before the start of the L-M experiment, participants completed a luminance nulling perceptual calibration procedure in L-M cone space on an Iiyama \(\textrm{VisionMaster}^{\textrm{TM}}\) Pro 510 display (800 x 600 pixels, 60 Hz refresh rate). During the task, participants were presented with a disc flickering within the L-M cone space (between magenta and cyan). Using a trackball, participants adjusted the angle in cone space to find their subjective isoluminant point, which resulted in changing the flickering intensity of the stimulus until the amplitude of the flicker appeared to be minimised. The result was used to modify the requested contrasts during stimulus preparation so as to account for individual differences affecting perceived illuminance, principally the L:M cone ratio\textsuperscript{\citeproc{ref-Carroll2002}{49},\citeproc{ref-Hofer2005}{50}}.
 
-\hypertarget{data-analysis}{%
-\subsection{Data analysis}\label{data-analysis}}
+\subsection{Data analysis}\label{data-analysis}
 
-The pupillometry data were analysed using the same method we used in our previous study.\textsuperscript{\protect\hyperlink{ref-Segala2023}{5}} The data were converted from mp4 videos to a csv text file using the Pupil Player software,\textsuperscript{\protect\hyperlink{ref-Kassner2014}{45}} which estimated pupil diameter for each eye on each frame using a 3D model of the eyeball. The individual data were then loaded into R for analysis, where a ten-second waveform for each trial in each eye was extracted (excluding the first two seconds after stimulus onset). We interpolated across any dropped or missing frames to ensure regular and continuous sampling over time. The Fourier transform was calculated for each waveform, and all repetitions of each condition were pooled across eye and then averaged. Finally, data were averaged across all participants to obtain the group results. We used coherent averaging and at each stage we excluded data points with a Mahalanobis distance exceeding \(D\) = 3 from the complex-valued mean.\textsuperscript{\protect\hyperlink{ref-Baker2021}{51}} For monocular stimulation, we confirmed that the consensual response was equivalent to the response in the stimulated eye.
+The pupillometry data were analysed using the same method we used in our previous study\textsuperscript{\citeproc{ref-Segala2023}{5}}. The data were converted from mp4 videos to a csv text file using the Pupil Player software\textsuperscript{\citeproc{ref-Kassner2014}{45}}, which estimated pupil diameter for each eye on each frame using a 3D model of the eyeball. The individual data were then loaded into R for analysis, where a ten-second waveform for each trial in each eye was extracted (excluding the first two seconds after stimulus onset). We interpolated across any dropped or missing frames to ensure regular and continuous sampling over time. The Fourier transform was calculated for each waveform, and all repetitions of each condition were pooled across eye and then averaged. Finally, data were averaged across all participants to obtain the group results. We used coherent averaging and at each stage we excluded data points with a Mahalanobis distance exceeding \(D\) = 3 from the complex-valued mean\textsuperscript{\citeproc{ref-Baker2021}{51}}. For monocular stimulation, we confirmed that the consensual response was equivalent to the response in the stimulated eye.
 
 For all experiments, we used a bootstrapping procedure with \ensuremath{10^{4}} iterations to estimate standard errors across participants. All analysis and figure construction was conducted using a single R-script, available online, making this study fully computationally reproducible: \url{https://osf.io/gdvt4/}.
 
-\hypertarget{computational-model-and-parameter-estimation}{%
-\subsection{Computational model and parameter estimation}\label{computational-model-and-parameter-estimation}}
+\subsection{Computational model and parameter estimation}\label{computational-model-and-parameter-estimation}
 
-To describe our data, we used the same model described in our previous study.\textsuperscript{\protect\hyperlink{ref-Segala2023}{5}} The model has the same general form as the first stage of the contrast gain control model proposed by Meese, Georgeson and Baker,\textsuperscript{\protect\hyperlink{ref-Meese2006}{33}} but omits the second stage. For the previous model that we used,\textsuperscript{\protect\hyperlink{ref-Segala2023}{5}} the exponent of the numerator and denominator had fixed values of 2 and (implicitly) 1. Here, we allow these parameters (called \emph{p} and \emph{q}) to be free, in order to permit different shapes of contrast response function, e.g.~accelerating or saturating. The responses of the left eye and right eye channels are as follows:
+To describe our data, we used the same model described in our previous study\textsuperscript{\citeproc{ref-Segala2023}{5}}. The model has the same general form as the first stage of the contrast gain control model proposed by Meese, Georgeson and Baker\textsuperscript{\citeproc{ref-Meese2006}{33}}, but omits the second stage. For the previous model that we used\textsuperscript{\citeproc{ref-Segala2023}{5}}, the exponent of the numerator and denominator had fixed values of 2 and (implicitly) 1. Here, we allow these parameters (called \emph{p} and \emph{q}) to be free, in order to permit different shapes of contrast response function, e.g.~accelerating or saturating. The responses of the left eye and right eye channels are as follows:
 
 \begin{equation}
 \label{eq:respL}
@@ -276,185 +305,235 @@ resp_B = R_{max}(resp_L + resp_R) + k,
 
 \noindent where \emph{k} is a noise parameter, and \(R_{max}\) scales the overall response amplitude.
 
-The models were fit using a hierarchical Bayesian framework implemented in Stan.\textsuperscript{\protect\hyperlink{ref-Carpenter2017}{52}} The data for each photoreceptor type and response frequency was fit separately, for a total of 8 model fits. The prior for the \(\omega\) parameter was Gaussian, with a mean of 1 and standard deviation of 0.5. Priors for the other free parameters were also Gaussian, with mean values based on previous work.\textsuperscript{\protect\hyperlink{ref-Segala2023}{5}} We calculated over \ensuremath{10^{6}} posterior samples, and retained 10\% for plotting.
+The models were fit using a hierarchical Bayesian framework implemented in Stan\textsuperscript{\citeproc{ref-Carpenter2017}{52}}. The data for each photoreceptor type and response frequency was fit separately, for a total of 8 model fits. The prior for the \(\omega\) parameter was Gaussian, with a mean of 1 and standard deviation of 0.5. Priors for the other free parameters were also Gaussian, with mean values based on previous work\textsuperscript{\citeproc{ref-Segala2023}{5}}. We calculated over \ensuremath{10^{6}} posterior samples, and retained 10\% for plotting.
 
-\hypertarget{references}{%
-\section{References}\label{references}}
+\section{References}\label{references}
 
-\hypertarget{refs}{}
-\leavevmode\hypertarget{ref-McDougal2015}{}%
-1. McDougal, D. H. \& Gamlin, P. D. Autonomic control of the eye. \emph{Comprehensive Physiology} \textbf{5}, 439--473 (2015).
+\phantomsection\label{refs}
+\begin{CSLReferences}{0}{0}
+\bibitem[\citeproctext]{ref-McDougal2015}
+\CSLLeftMargin{1. }%
+\CSLRightInline{McDougal, D. H. \& Gamlin, P. D. \href{https://doi.org/10.1002/cphy.c140014}{Autonomic control of the eye}. \emph{Comprehensive Physiology} \textbf{5}, 439--473 (2015).}
 
-\leavevmode\hypertarget{ref-McDougal2008}{}%
-2. McDougal, D. H. \& Gamlin, P. D. Pupillary control pathways. in \emph{The senses: A comprehensive reference} 521--536 (Elsevier, 2008).
+\bibitem[\citeproctext]{ref-McDougal2008}
+\CSLLeftMargin{2. }%
+\CSLRightInline{McDougal, D. H. \& Gamlin, P. D. Pupillary control pathways. in \emph{The senses: A comprehensive reference} 521--536 (Elsevier, 2008).}
 
-\leavevmode\hypertarget{ref-Wang2015}{}%
-3. Wang, C.-A. \& Munoz, D. P. A circuit for pupil orienting responses: Implications for cognitive modulation of pupil size. \emph{Curr Opin Neurobiol} \textbf{33}, 134--40 (2015).
+\bibitem[\citeproctext]{ref-Wang2015}
+\CSLLeftMargin{3. }%
+\CSLRightInline{Wang, C.-A. \& Munoz, D. P. \href{https://doi.org/10.1016/j.conb.2015.03.018}{A circuit for pupil orienting responses: Implications for cognitive modulation of pupil size}. \emph{Curr Opin Neurobiol} \textbf{33}, 134--40 (2015).}
 
-\leavevmode\hypertarget{ref-Wyatt1981}{}%
-4. Wyatt, H. J. \& Musselman, J. F. Pupillary light reflex in humans: Evidence for an unbalanced pathway from nasal retina, and for signal cancellation in brainstem. \emph{Vision Res} \textbf{21}, 513--25 (1981).
+\bibitem[\citeproctext]{ref-Wyatt1981}
+\CSLLeftMargin{4. }%
+\CSLRightInline{Wyatt, H. J. \& Musselman, J. F. \href{https://doi.org/10.1016/0042-6989(81)90097-3}{Pupillary light reflex in humans: Evidence for an unbalanced pathway from nasal retina, and for signal cancellation in brainstem}. \emph{Vision Res} \textbf{21}, 513--25 (1981).}
 
-\leavevmode\hypertarget{ref-Segala2023}{}%
-5. Segala, F. G. \emph{et al.} Different rules for binocular combination of luminance flicker in cortical and subcortical pathways. \emph{eLife} \textbf{12}, (2023).
+\bibitem[\citeproctext]{ref-Segala2023}
+\CSLLeftMargin{5. }%
+\CSLRightInline{Segala, F. G. \emph{et al.} \href{https://doi.org/10.7554/elife.87048}{Different rules for binocular combination of luminance flicker in cortical and subcortical pathways}. \emph{eLife} \textbf{12}, (2023).}
 
-\leavevmode\hypertarget{ref-Barrionuevo2014}{}%
-6. Barrionuevo, P. A. \emph{et al.} Assessing rod, cone, and melanopsin contributions to human pupil flicker responses. \emph{Investigative Ophthalmology \& Visual Science} \textbf{55}, 719--27 (2014).
+\bibitem[\citeproctext]{ref-Barrionuevo2014}
+\CSLLeftMargin{6. }%
+\CSLRightInline{Barrionuevo, P. A. \emph{et al.} \href{https://doi.org/10.1167/iovs.13-13252}{Assessing rod, cone, and melanopsin contributions to human pupil flicker responses}. \emph{Investigative Ophthalmology \& Visual Science} \textbf{55}, 719--27 (2014).}
 
-\leavevmode\hypertarget{ref-Barrionuevo2018}{}%
-7. Barrionuevo, P. A., McAnany, J. J., Zele, A. J. \& Cao, D. Non-linearities in the Rod and Cone Photoreceptor Inputs to the Afferent Pupil Light Response. \emph{Frontiers in Neurology} \textbf{9}, (2018).
+\bibitem[\citeproctext]{ref-Barrionuevo2018}
+\CSLLeftMargin{7. }%
+\CSLRightInline{Barrionuevo, P. A., McAnany, J. J., Zele, A. J. \& Cao, D. \href{https://doi.org/10.3389/fneur.2018.01140}{Non-linearities in the {Rod} and {Cone} {Photoreceptor} {Inputs} to the {Afferent} {Pupil} {Light} {Response}}. \emph{Frontiers in Neurology} \textbf{9}, (2018).}
 
-\leavevmode\hypertarget{ref-Dacey2005}{}%
-8. Dacey, D. M. \emph{et al.} Melanopsin-expressing ganglion cells in primate retina signal colour and irradiance and project to the LGN. \emph{Nature} \textbf{433}, 749--754 (2005).
+\bibitem[\citeproctext]{ref-Dacey2005}
+\CSLLeftMargin{8. }%
+\CSLRightInline{Dacey, D. M. \emph{et al.} \href{https://doi.org/10.1038/nature03387}{Melanopsin-expressing ganglion cells in primate retina signal colour and irradiance and project to the {LGN}}. \emph{Nature} \textbf{433}, 749--754 (2005).}
 
-\leavevmode\hypertarget{ref-Murray2018}{}%
-9. Murray, I. J., Kremers, J., McKeefry, D. \& Parry, N. R. A. Paradoxical pupil responses to isolated M-cone increments. \emph{Journal of the Optical Society of America A} \textbf{35}, B66--B71 (2018).
+\bibitem[\citeproctext]{ref-Murray2018}
+\CSLLeftMargin{9. }%
+\CSLRightInline{Murray, I. J., Kremers, J., McKeefry, D. \& Parry, N. R. A. \href{https://doi.org/10.1364/JOSAA.35.000B66}{Paradoxical pupil responses to isolated {M}-cone increments}. \emph{Journal of the Optical Society of America A} \textbf{35}, B66--B71 (2018).}
 
-\leavevmode\hypertarget{ref-Spitschan2014}{}%
-10. Spitschan, M., Jain, S., Brainard, D. H. \& Aguirre, G. K. Opponent melanopsin and s-cone signals in the human pupillary light response. \emph{Proceedings of the National Academy of Sciences} \textbf{111}, 15568--15572 (2014).
+\bibitem[\citeproctext]{ref-Spitschan2014}
+\CSLLeftMargin{10. }%
+\CSLRightInline{Spitschan, M., Jain, S., Brainard, D. H. \& Aguirre, G. K. \href{https://doi.org/10.1073/pnas.1400942111}{Opponent melanopsin and s-cone signals in the human pupillary light response}. \emph{Proceedings of the National Academy of Sciences} \textbf{111}, 15568--15572 (2014).}
 
-\leavevmode\hypertarget{ref-Spitschan2019}{}%
-11. Spitschan, M. \& Cajochen, C. Binocular facilitation in light-mediated melatonin suppression? \emph{J Pineal Res} \textbf{67}, e12602 (2019).
+\bibitem[\citeproctext]{ref-Spitschan2019}
+\CSLLeftMargin{11. }%
+\CSLRightInline{Spitschan, M. \& Cajochen, C. \href{https://doi.org/10.1111/jpi.12602}{Binocular facilitation in light-mediated melatonin suppression?} \emph{J Pineal Res} \textbf{67}, e12602 (2019).}
 
-\leavevmode\hypertarget{ref-Woelders2018}{}%
-12. Woelders, T. \emph{et al.} Melanopsin- and L-cone--induced pupil constriction is inhibited by S- and M-cones in humans. \emph{Proceedings of the National Academy of Sciences} \textbf{115}, 792--797 (2018).
+\bibitem[\citeproctext]{ref-Woelders2018}
+\CSLLeftMargin{12. }%
+\CSLRightInline{Woelders, T. \emph{et al.} \href{https://doi.org/10.1073/pnas.1716281115}{Melanopsin- and {L}-cone--induced pupil constriction is inhibited by {S}- and {M}-cones in humans}. \emph{Proceedings of the National Academy of Sciences} \textbf{115}, 792--797 (2018).}
 
-\leavevmode\hypertarget{ref-Mathot2018}{}%
-13. Mathôt, S. Pupillometry: Psychology, physiology, and function. \emph{J Cogn} \textbf{1}, 16 (2018).
+\bibitem[\citeproctext]{ref-Mathot2018}
+\CSLLeftMargin{13. }%
+\CSLRightInline{Mathôt, S. \href{https://doi.org/10.5334/joc.18}{Pupillometry: Psychology, physiology, and function}. \emph{J Cogn} \textbf{1}, 16 (2018).}
 
-\leavevmode\hypertarget{ref-Markwell2010}{}%
-14. Markwell, E. L., Feigl, B. \& Zele, A. J. Intrinsically photosensitive melanopsin retinal ganglion cell contributions to the pupillary light reflex and circadian rhythm. \emph{Clinical and Experimental Optometry} \textbf{93}, 137--149 (2010).
+\bibitem[\citeproctext]{ref-Markwell2010}
+\CSLLeftMargin{14. }%
+\CSLRightInline{Markwell, E. L., Feigl, B. \& Zele, A. J. \href{https://doi.org/10.1111/j.1444-0938.2010.00479.x}{Intrinsically photosensitive melanopsin retinal ganglion cell contributions to the pupillary light reflex and circadian rhythm}. \emph{Clinical and Experimental Optometry} \textbf{93}, 137--149 (2010).}
 
-\leavevmode\hypertarget{ref-McDougal2010}{}%
-15. McDougal, D. H. \& Gamlin, P. D. The influence of intrinsically-photosensitive retinal ganglion cells on the spectral sensitivity and response dynamics of the human pupillary light reflex. \emph{Vision Research} \textbf{50}, 72--87 (2010).
+\bibitem[\citeproctext]{ref-McDougal2010}
+\CSLLeftMargin{15. }%
+\CSLRightInline{McDougal, D. H. \& Gamlin, P. D. \href{https://doi.org/10.1016/j.visres.2009.10.012}{The influence of intrinsically-photosensitive retinal ganglion cells on the spectral sensitivity and response dynamics of the human pupillary light reflex}. \emph{Vision Research} \textbf{50}, 72--87 (2010).}
 
-\leavevmode\hypertarget{ref-Provencio2000}{}%
-16. Provencio, I. \emph{et al.} A Novel Human Opsin in the Inner Retina. \emph{Journal of Neuroscience} \textbf{20}, 600--605 (2000).
+\bibitem[\citeproctext]{ref-Provencio2000}
+\CSLLeftMargin{16. }%
+\CSLRightInline{Provencio, I. \emph{et al.} \href{https://doi.org/10.1523/JNEUROSCI.20-02-00600.2000}{A {Novel} {Human} {Opsin} in the {Inner} {Retina}}. \emph{Journal of Neuroscience} \textbf{20}, 600--605 (2000).}
 
-\leavevmode\hypertarget{ref-Panda2002}{}%
-17. Panda, S. \emph{et al.} Melanopsin (opn4) requirement for normal light-induced circadian phase shifting. \emph{Science} \textbf{298}, 2213--2216 (2002).
+\bibitem[\citeproctext]{ref-Panda2002}
+\CSLLeftMargin{17. }%
+\CSLRightInline{Panda, S. \emph{et al.} \href{https://doi.org/10.1126/science.1076848}{Melanopsin (Opn4) requirement for normal light-induced circadian phase shifting}. \emph{Science} \textbf{298}, 2213--2216 (2002).}
 
-\leavevmode\hypertarget{ref-Ruby2002}{}%
-18. Ruby, N. F. \emph{et al.} Role of melanopsin in circadian responses to light. \emph{Science} \textbf{298}, 2211--2213 (2002).
+\bibitem[\citeproctext]{ref-Ruby2002}
+\CSLLeftMargin{18. }%
+\CSLRightInline{Ruby, N. F. \emph{et al.} \href{https://doi.org/10.1126/science.1076701}{Role of melanopsin in circadian responses to light}. \emph{Science} \textbf{298}, 2211--2213 (2002).}
 
-\leavevmode\hypertarget{ref-Dacey2003}{}%
-19. Dacey, D. M., Peterson, B. B., Robinson, F. R. \& Gamlin, P. D. Fireworks in the primate retina: In vitro photodynamics reveals diverse lgn-projecting ganglion cell types. \emph{Neuron} \textbf{37}, 15--27 (2003).
+\bibitem[\citeproctext]{ref-Dacey2003}
+\CSLLeftMargin{19. }%
+\CSLRightInline{Dacey, D. M., Peterson, B. B., Robinson, F. R. \& Gamlin, P. D. \href{https://doi.org/10.1016/S0896-6273(02)01143-1}{Fireworks in the primate retina: In vitro photodynamics reveals diverse LGN-projecting ganglion cell types}. \emph{Neuron} \textbf{37}, 15--27 (2003).}
 
-\leavevmode\hypertarget{ref-Lucas2003}{}%
-20. Lucas, R. J. \emph{et al.} Diminished pupillary light reflex at high irradiances in melanopsin-knockout mice. \emph{Science} \textbf{299}, 245--247 (2003).
+\bibitem[\citeproctext]{ref-Lucas2003}
+\CSLLeftMargin{20. }%
+\CSLRightInline{Lucas, R. J. \emph{et al.} \href{https://doi.org/10.1126/science.1077293}{Diminished pupillary light reflex at high irradiances in melanopsin-knockout mice}. \emph{Science} \textbf{299}, 245--247 (2003).}
 
-\leavevmode\hypertarget{ref-Gamlin2007}{}%
-21. Gamlin, P. D. R. \emph{et al.} Human and macaque pupil responses driven by melanopsin-containing retinal ganglion cells. \emph{Vision Research} \textbf{47}, 946--954 (2007).
+\bibitem[\citeproctext]{ref-Gamlin2007}
+\CSLLeftMargin{21. }%
+\CSLRightInline{Gamlin, P. D. R. \emph{et al.} \href{https://doi.org/10.1016/j.visres.2006.12.015}{Human and macaque pupil responses driven by melanopsin-containing retinal ganglion cells}. \emph{Vision Research} \textbf{47}, 946--954 (2007).}
 
-\leavevmode\hypertarget{ref-Estevez1982}{}%
-22. Estévez, O. \& Spekreijse, H. The "silent substitution" method in visual research. \emph{Vision Research} \textbf{22}, 681--691 (1982).
+\bibitem[\citeproctext]{ref-Estevez1982}
+\CSLLeftMargin{22. }%
+\CSLRightInline{Estévez, O. \& Spekreijse, H. \href{https://doi.org/10.1016/0042-6989(82)90104-3}{The "silent substitution" method in visual research}. \emph{Vision Research} \textbf{22}, 681--691 (1982).}
 
-\leavevmode\hypertarget{ref-Shapiro1996}{}%
-23. Shapiro, A. G., Pokorny, J. \& Smith, V. C. Conerod receptor spaces with illustrations that use CRT phosphor and light-emitting-diode spectra. \emph{Journal of the Optical Society of America A} \textbf{13}, 2319 (1996).
+\bibitem[\citeproctext]{ref-Shapiro1996}
+\CSLLeftMargin{23. }%
+\CSLRightInline{Shapiro, A. G., Pokorny, J. \& Smith, V. C. \href{https://doi.org/10.1364/josaa.13.002319}{Cone{\textendash}rod receptor spaces with illustrations that use {CRT} phosphor and light-emitting-diode spectra}. \emph{Journal of the Optical Society of America A} \textbf{13}, 2319 (1996).}
 
-\leavevmode\hypertarget{ref-Spitschan2018}{}%
-24. Spitschan, M. \& Woelders, T. The Method of Silent Substitution for Examining Melanopsin Contributions to Pupil Control. \emph{Frontiers in Neurology} \textbf{9}, (2018).
+\bibitem[\citeproctext]{ref-Spitschan2018}
+\CSLLeftMargin{24. }%
+\CSLRightInline{Spitschan, M. \& Woelders, T. \href{https://doi.org/10.3389/fneur.2018.00941}{The {Method} of {Silent} {Substitution} for {Examining} {Melanopsin} {Contributions} to {Pupil} {Control}}. \emph{Frontiers in Neurology} \textbf{9}, (2018).}
 
-\leavevmode\hypertarget{ref-Cao2015}{}%
-25. Cao, D., Nicandro, N. \& Barrionuevo, P. A. A five-primary photostimulator suitable for studying intrinsically photosensitive retinal ganglion cell functions in humans. \emph{Journal of Vision} \textbf{15}, 27 (2015).
+\bibitem[\citeproctext]{ref-Cao2015}
+\CSLLeftMargin{25. }%
+\CSLRightInline{Cao, D., Nicandro, N. \& Barrionuevo, P. A. \href{https://doi.org/10.1167/15.1.27}{A five-primary photostimulator suitable for studying intrinsically photosensitive retinal ganglion cell functions in humans}. \emph{Journal of Vision} \textbf{15}, 27 (2015).}
 
-\leavevmode\hypertarget{ref-Hubel1962}{}%
-26. Hubel, D. H. \& Wiesel, T. N. Receptive fields, binocular interaction and functional architecture in the cat's visual cortex. \emph{J Physiol} \textbf{160}, 106--54 (1962).
+\bibitem[\citeproctext]{ref-Hubel1962}
+\CSLLeftMargin{26. }%
+\CSLRightInline{Hubel, D. H. \& Wiesel, T. N. \href{https://doi.org/10.1113/jphysiol.1962.sp006837}{Receptive fields, binocular interaction and functional architecture in the cat's visual cortex}. \emph{J Physiol} \textbf{160}, 106--54 (1962).}
 
-\leavevmode\hypertarget{ref-Moradi2009}{}%
-27. Moradi, F. \& Heeger, D. J. Inter-ocular contrast normalization in human visual cortex. \emph{J Vis} \textbf{9}, 13.1--22 (2009).
+\bibitem[\citeproctext]{ref-Moradi2009}
+\CSLLeftMargin{27. }%
+\CSLRightInline{Moradi, F. \& Heeger, D. J. \href{https://doi.org/10.1167/9.3.13}{Inter-ocular contrast normalization in human visual cortex}. \emph{J Vis} \textbf{9}, 13.1--22 (2009).}
 
-\leavevmode\hypertarget{ref-Baker2018}{}%
-28. Baker, D. H., Lygo, F. A., Meese, T. S. \& Georgeson, M. A. Binocular summation revisited: Beyond \(\sqrt{2}\). \emph{Psychol Bull} \textbf{144}, 1186--1199 (2018).
+\bibitem[\citeproctext]{ref-Baker2018}
+\CSLLeftMargin{28. }%
+\CSLRightInline{Baker, D. H., Lygo, F. A., Meese, T. S. \& Georgeson, M. A. \href{https://doi.org/10.1037/bul0000163}{Binocular summation revisited: Beyond \(\sqrt{2}\)}. \emph{Psychol Bull} \textbf{144}, 1186--1199 (2018).}
 
-\leavevmode\hypertarget{ref-Campbell1965}{}%
-29. Campbell, F. W. \& Green, D. G. Monocular versus binocular visual acuity. \emph{Nature} \textbf{208}, 191--2 (1965).
+\bibitem[\citeproctext]{ref-Campbell1965}
+\CSLLeftMargin{29. }%
+\CSLRightInline{Campbell, F. W. \& Green, D. G. \href{https://doi.org/10.1038/208191a0}{Monocular versus binocular visual acuity}. \emph{Nature} \textbf{208}, 191--2 (1965).}
 
-\leavevmode\hypertarget{ref-Legge1984}{}%
-30. Legge, G. E. Binocular contrast summation--ii. Quadratic summation. \emph{Vision Res} \textbf{24}, 385--94 (1984).
+\bibitem[\citeproctext]{ref-Legge1984}
+\CSLLeftMargin{30. }%
+\CSLRightInline{Legge, G. E. \href{https://doi.org/10.1016/0042-6989(84)90064-6}{Binocular contrast summation--II. Quadratic summation}. \emph{Vision Res} \textbf{24}, 385--94 (1984).}
 
-\leavevmode\hypertarget{ref-Baker2007}{}%
-31. Baker, D. H., Meese, T. S. \& Georgeson, M. A. Binocular interaction: Contrast matching and contrast discrimination are predicted by the same model. \emph{Spat Vis} \textbf{20}, 397--413 (2007).
+\bibitem[\citeproctext]{ref-Baker2007}
+\CSLLeftMargin{31. }%
+\CSLRightInline{Baker, D. H., Meese, T. S. \& Georgeson, M. A. \href{https://doi.org/10.1163/156856807781503622}{Binocular interaction: Contrast matching and contrast discrimination are predicted by the same model}. \emph{Spat Vis} \textbf{20}, 397--413 (2007).}
 
-\leavevmode\hypertarget{ref-Ding2006}{}%
-32. Ding, J. \& Sperling, G. A gain-control theory of binocular combination. \emph{Proc Natl Acad Sci U S A} \textbf{103}, 1141--6 (2006).
+\bibitem[\citeproctext]{ref-Ding2006}
+\CSLLeftMargin{32. }%
+\CSLRightInline{Ding, J. \& Sperling, G. \href{https://doi.org/10.1073/pnas.0509629103}{A gain-control theory of binocular combination}. \emph{Proc Natl Acad Sci U S A} \textbf{103}, 1141--6 (2006).}
 
-\leavevmode\hypertarget{ref-Meese2006}{}%
-33. Meese, T. S., Georgeson, M. A. \& Baker, D. H. Binocular contrast vision at and above threshold. \emph{Journal of Vision} \textbf{6}, 1224--43 (2006).
+\bibitem[\citeproctext]{ref-Meese2006}
+\CSLLeftMargin{33. }%
+\CSLRightInline{Meese, T. S., Georgeson, M. A. \& Baker, D. H. \href{https://doi.org/10.1167/6.11.7}{Binocular contrast vision at and above threshold}. \emph{Journal of Vision} \textbf{6}, 1224--43 (2006).}
 
-\leavevmode\hypertarget{ref-Kingdom2015}{}%
-34. Kingdom, F. A. A. \& Libenson, L. Dichoptic color saturation mixture: Binocular luminance contrast promotes perceptual averaging. \emph{J Vis} \textbf{15}, 2 (2015).
+\bibitem[\citeproctext]{ref-Kingdom2015}
+\CSLLeftMargin{34. }%
+\CSLRightInline{Kingdom, F. A. A. \& Libenson, L. \href{https://doi.org/10.1167/15.5.2}{Dichoptic color saturation mixture: Binocular luminance contrast promotes perceptual averaging}. \emph{J Vis} \textbf{15}, 2 (2015).}
 
-\leavevmode\hypertarget{ref-Busse2009}{}%
-35. Busse, L., Wade, A. R. \& Carandini, M. Representation of concurrent stimuli by population activity in visual cortex. \emph{Neuron} \textbf{64}, 931--42 (2009).
+\bibitem[\citeproctext]{ref-Busse2009}
+\CSLLeftMargin{35. }%
+\CSLRightInline{Busse, L., Wade, A. R. \& Carandini, M. \href{https://doi.org/10.1016/j.neuron.2009.11.004}{Representation of concurrent stimuli by population activity in visual cortex}. \emph{Neuron} \textbf{64}, 931--42 (2009).}
 
-\leavevmode\hypertarget{ref-Baker2024}{}%
-36. Baker, D. H. \emph{et al.} Binocular integration of chromatic and luminance signals. \emph{Journal of Vision} \textbf{Under review}, (2024).
+\bibitem[\citeproctext]{ref-Baker2024}
+\CSLLeftMargin{36. }%
+\CSLRightInline{Baker, D. H. \emph{et al.} \href{https://doi.org/10.31234/osf.io/atsfh}{Binocular integration of chromatic and luminance signals}. \emph{Journal of Vision} \textbf{Under review}, (2024).}
 
-\leavevmode\hypertarget{ref-Baker2017}{}%
-37. Baker, D. H. \& Wade, A. R. Evidence for an optimal algorithm underlying signal combination in human visual cortex. \emph{Cereb Cortex} \textbf{27}, 254--264 (2017).
+\bibitem[\citeproctext]{ref-Baker2017}
+\CSLLeftMargin{37. }%
+\CSLRightInline{Baker, D. H. \& Wade, A. R. \href{https://doi.org/10.1093/cercor/bhw395}{Evidence for an optimal algorithm underlying signal combination in human visual cortex}. \emph{Cereb Cortex} \textbf{27}, 254--264 (2017).}
 
-\leavevmode\hypertarget{ref-Kaestner2019}{}%
-38. Kaestner, M. \emph{et al.} Asymmetries between achromatic and chromatic extraction of 3D motion signals. \emph{Proc Natl Acad Sci U S A} \textbf{116}, 13631--13640 (2019).
+\bibitem[\citeproctext]{ref-Kaestner2019}
+\CSLLeftMargin{38. }%
+\CSLRightInline{Kaestner, M. \emph{et al.} \href{https://doi.org/10.1073/pnas.1817202116}{Asymmetries between achromatic and chromatic extraction of 3D motion signals}. \emph{Proc Natl Acad Sci U S A} \textbf{116}, 13631--13640 (2019).}
 
-\leavevmode\hypertarget{ref-Martin2022}{}%
-39. Martin, J. T., Pinto, J., Bulte, D. \& Spitschan, M. PyPlr: A versatile, integrated system of hardware and software for researching the human pupillary light reflex. \emph{Behavior Research Methods} \textbf{54}, 2720--2739 (2022).
+\bibitem[\citeproctext]{ref-Martin2022}
+\CSLLeftMargin{39. }%
+\CSLRightInline{Martin, J. T., Pinto, J., Bulte, D. \& Spitschan, M. \href{https://doi.org/10.3758/s13428-021-01759-3}{PyPlr: A versatile, integrated system of hardware and software for researching the human pupillary light reflex}. \emph{Behavior Research Methods} \textbf{54}, 2720--2739 (2022).}
 
-\leavevmode\hypertarget{ref-Martin2023}{}%
-40. Martin, J. T., Boynton, G. M., Baker, D. H., Wade, A. R. \& Spitschan, M. PySilSub: An open-source python toolbox for implementing the method of silent substitution in vision and nonvisual photoreception research. \emph{Journal of Vision} \textbf{23}, 10 (2023).
+\bibitem[\citeproctext]{ref-Martin2023}
+\CSLLeftMargin{40. }%
+\CSLRightInline{Martin, J. T., Boynton, G. M., Baker, D. H., Wade, A. R. \& Spitschan, M. \href{https://doi.org/10.1167/jov.23.7.10}{PySilSub: An open-source python toolbox for implementing the method of silent substitution in vision and nonvisual photoreception research}. \emph{Journal of Vision} \textbf{23}, 10 (2023).}
 
-\leavevmode\hypertarget{ref-Stockman2000}{}%
-41. Stockman, A. \& Sharpe, L. T. The spectral sensitivities of the middle- and long-wavelength-sensitive cones derived from measurements in observers of known genotype. \emph{Vision Res} \textbf{40}, 1711--37 (2000).
+\bibitem[\citeproctext]{ref-Stockman2000}
+\CSLLeftMargin{41. }%
+\CSLRightInline{Stockman, A. \& Sharpe, L. T. \href{https://doi.org/10.1016/s0042-6989(00)00021-3}{The spectral sensitivities of the middle- and long-wavelength-sensitive cones derived from measurements in observers of known genotype}. \emph{Vision Res} \textbf{40}, 1711--37 (2000).}
 
-\leavevmode\hypertarget{ref-Barrionuevo2016}{}%
-42. Barrionuevo, P. A. \& Cao, D. Luminance and chromatic signals interact differently with melanopsin activation to control the pupil light response. \emph{Journal of Vision} \textbf{16(11)}, 29 (2016).
+\bibitem[\citeproctext]{ref-Barrionuevo2016}
+\CSLLeftMargin{42. }%
+\CSLRightInline{Barrionuevo, P. A. \& Cao, D. \href{https://doi.org/10.1167/16.11.29}{Luminance and chromatic signals interact differently with melanopsin activation to control the pupil light response}. \emph{Journal of Vision} \textbf{16(11)}, 29 (2016).}
 
-\leavevmode\hypertarget{ref-Spitschan2015}{}%
-43. Spitschan, M., Aguirre, G. K. \& Brainard, D. H. Selective stimulation of penumbral cones reveals perception in the shadow of retinal blood vessels. \emph{PLoS One} \textbf{10}, e0124328 (2015).
+\bibitem[\citeproctext]{ref-Spitschan2015}
+\CSLLeftMargin{43. }%
+\CSLRightInline{Spitschan, M., Aguirre, G. K. \& Brainard, D. H. \href{https://doi.org/10.1371/journal.pone.0124328}{Selective stimulation of penumbral cones reveals perception in the shadow of retinal blood vessels}. \emph{PLoS One} \textbf{10}, e0124328 (2015).}
 
-\leavevmode\hypertarget{ref-Zele2018}{}%
-44. Zele, A. J., Feigl, B., Adhikari, P., Maynard, M. L. \& Cao, D. Melanopsin photoreception contributes to human visual detection, temporal and colour processing. \emph{Scientific Reports} \textbf{8}, (2018).
+\bibitem[\citeproctext]{ref-Zele2018}
+\CSLLeftMargin{44. }%
+\CSLRightInline{Zele, A. J., Feigl, B., Adhikari, P., Maynard, M. L. \& Cao, D. \href{https://doi.org/10.1038/s41598-018-22197-w}{Melanopsin photoreception contributes to human visual detection, temporal and colour processing}. \emph{Scientific Reports} \textbf{8}, (2018).}
 
-\leavevmode\hypertarget{ref-Kassner2014}{}%
-45. Kassner, M., Patera, W. \& Bulling, A. Pupil: An open source platform for pervasive eye tracking and mobile gaze-based interaction. in \emph{Proceedings of the 2014 ACM international joint conference on pervasive and ubiquitous computing: Adjunct publication} (ACM, 2014). doi:\href{https://doi.org/10.1145/2638728.2641695}{10.1145/2638728.2641695}.
+\bibitem[\citeproctext]{ref-Kassner2014}
+\CSLLeftMargin{45. }%
+\CSLRightInline{Kassner, M., Patera, W. \& Bulling, A. Pupil: An open source platform for pervasive eye tracking and mobile gaze-based interaction. in \emph{Proceedings of the 2014 {ACM} international joint conference on pervasive and ubiquitous computing: Adjunct publication} ({ACM}, 2014). doi:\href{https://doi.org/10.1145/2638728.2641695}{10.1145/2638728.2641695}.}
 
-\leavevmode\hypertarget{ref-Norcia2015}{}%
-46. Norcia, A. M., Appelbaum, L. G., Ales, J. M., Cottereau, B. R. \& Rossion, B. The steady-state visual evoked potential in vision research: A review. \emph{Journal of Vision} \textbf{15(6)}, 4 (2015).
+\bibitem[\citeproctext]{ref-Norcia2015}
+\CSLLeftMargin{46. }%
+\CSLRightInline{Norcia, A. M., Appelbaum, L. G., Ales, J. M., Cottereau, B. R. \& Rossion, B. \href{https://doi.org/10.1167/15.6.4}{The steady-state visual evoked potential in vision research: A review}. \emph{Journal of Vision} \textbf{15(6)}, 4 (2015).}
 
-\leavevmode\hypertarget{ref-Zele2019}{}%
-47. Zele, A. J., Adhikari, P., Cao, D. \& Feigl, B. Melanopsin driven enhancement of cone-mediated visual processing. \emph{Vision Res} \textbf{160}, 72--81 (2019).
+\bibitem[\citeproctext]{ref-Zele2019}
+\CSLLeftMargin{47. }%
+\CSLRightInline{Zele, A. J., Adhikari, P., Cao, D. \& Feigl, B. \href{https://doi.org/10.1016/j.visres.2019.04.009}{Melanopsin driven enhancement of cone-mediated visual processing}. \emph{Vision Res} \textbf{160}, 72--81 (2019).}
 
-\leavevmode\hypertarget{ref-Baker2020}{}%
-48. Baker, D. H. \emph{et al.} Binaural summation of amplitude modulation involves weak interaural suppression. \emph{Sci Rep} \textbf{10}, 3560 (2020).
+\bibitem[\citeproctext]{ref-Baker2020}
+\CSLLeftMargin{48. }%
+\CSLRightInline{Baker, D. H. \emph{et al.} \href{https://doi.org/10.1038/s41598-020-60602-5}{Binaural summation of amplitude modulation involves weak interaural suppression}. \emph{Sci Rep} \textbf{10}, 3560 (2020).}
 
-\leavevmode\hypertarget{ref-Carroll2002}{}%
-49. Carroll, J., Neitz, J. \& Neitz, M. Estimates of L:M cone ratio from ERG flicker photometry and genetics. \emph{Journal of Vision} \textbf{2}, 1 (2002).
+\bibitem[\citeproctext]{ref-Carroll2002}
+\CSLLeftMargin{49. }%
+\CSLRightInline{Carroll, J., Neitz, J. \& Neitz, M. \href{https://doi.org/10.1167/2.8.1}{Estimates of {L}:{M} cone ratio from {ERG} flicker photometry and genetics}. \emph{Journal of Vision} \textbf{2}, 1 (2002).}
 
-\leavevmode\hypertarget{ref-Hofer2005}{}%
-50. Hofer, H., Carroll, J., Neitz, J., Neitz, M. \& Williams, D. R. Organization of the human trichromatic cone mosaic. \emph{The Journal of Neuroscience} \textbf{25}, 9669--9679 (2005).
+\bibitem[\citeproctext]{ref-Hofer2005}
+\CSLLeftMargin{50. }%
+\CSLRightInline{Hofer, H., Carroll, J., Neitz, J., Neitz, M. \& Williams, D. R. \href{https://doi.org/10.1523/jneurosci.2414-05.2005}{Organization of the human trichromatic cone mosaic}. \emph{The Journal of Neuroscience} \textbf{25}, 9669--9679 (2005).}
 
-\leavevmode\hypertarget{ref-Baker2021}{}%
-51. Baker, D. H. Statistical analysis of periodic data in neuroscience. \emph{Neurons, Behavior, Data analysis, and Theory} \textbf{5}, (2021).
+\bibitem[\citeproctext]{ref-Baker2021}
+\CSLLeftMargin{51. }%
+\CSLRightInline{Baker, D. H. \href{https://doi.org/10.51628/001c.27680}{Statistical analysis of periodic data in neuroscience}. \emph{Neurons, Behavior, Data analysis, and Theory} \textbf{5}, (2021).}
 
-\leavevmode\hypertarget{ref-Carpenter2017}{}%
-52. Carpenter, B. \emph{et al.} Stan: A probabilistic programming language. \emph{J Stat Softw} \textbf{76}, (2017).
+\bibitem[\citeproctext]{ref-Carpenter2017}
+\CSLLeftMargin{52. }%
+\CSLRightInline{Carpenter, B. \emph{et al.} \href{https://doi.org/10.18637/jss.v076.i01}{Stan: A probabilistic programming language}. \emph{J Stat Softw} \textbf{76}, (2017).}
 
-\hypertarget{acknowledgements}{%
-\section{Acknowledgements}\label{acknowledgements}}
+\end{CSLReferences}
+
+\section{Acknowledgements}\label{acknowledgements}
 
 Supported by Biotechnology and Biological Sciences Research Council grant BB/V007580/1 awarded to DHB and ARW.
 
-\hypertarget{author-contributions}{%
-\section{Author contributions}\label{author-contributions}}
+\section{Author contributions}\label{author-contributions}
 
 D.H.B. and A.R.W. conceived the project D.H.B, A.R.W., and A.B. supervised the project. F.G.S., J.T.M., A.R.W., and D.H.B. designed the experiments. F.G.S., J.T.M., and A.Y.M. performed the experiments and collected the data. F.G.S and D.H.B. analysed the data and implemented the computational model. F.G.S. and D.H.B. wrote the manuscript with input from all authors. A.B., J.T.M., A.Y.M., and A.R.W. provided feedback on the manuscript.
 
-\hypertarget{competing-interests}{%
-\section{Competing interests}\label{competing-interests}}
+\section{Competing interests}\label{competing-interests}
 
 The authors declare no competing interests.
 
-\hypertarget{materials-and-correspondence}{%
-\section{Materials and Correspondence}\label{materials-and-correspondence}}
+\section{Materials and Correspondence}\label{materials-and-correspondence}
 
 Correspondence and material requests should be addressed to \href{federico.segala@york.ac.uk}{Federico G. Segala}.
 
