@@ -16,7 +16,7 @@ csl: the-journal-of-neuroscience.csl
 header-includes:
   \usepackage{caption}
   \usepackage{setspace}\doublespacing
-  # \usepackage{lineno} \linenumbers
+  \usepackage{lineno} \linenumbers
 ---
 
 ```{r setup, include=FALSE}
