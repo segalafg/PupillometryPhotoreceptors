@@ -264,24 +264,6 @@ $^4$York Biomedical Research Institute, University of York, Heslington, York, YO
 
 Corresponding author: Federico G. Segala, [federico.segala@york.ac.uk](federico.segala@york.ac.uk).
 
-Number of pages: 21
-
-Number of figures: 4
-
-Number of tables: 1
-
-Number of words for abstract: 187/250
-
-Number of words for introduction: 634/650
-
-Number of words for discussion: 600/1500
-
-Conflict of interest: The authors declare no competing financial interests.
-
-Acknowledgements: Supported by Biotechnology and Biological Sciences Research Council grant BB/V007580/1 awarded to DHB and ARW.
-
-\pagebreak
-
 ```{r individualanalyses, include=FALSE, results='hide'}
 
 # analyse individual participant data for all conditions
@@ -2360,9 +2342,19 @@ Our recent psychophysical work [@Baker2024] has looked at binocular interactions
 
 We have demonstrated that binocular combination of temporal flickering light in the autonomic nervous system depends on the photoreceptor pathway stimulated. We were able to elicit pupil responses by stimulating the periphery of the retina and we were able to record contrast response functions for all photoreceptor pathways. While all pathways showed non-linear combination, they varied in how the signals are combined, particularly in the weight of interocular suppression. This was strong ($\omega \ge 1$) for L-M and melanopsin signals at the first harmonic, and all pathways at the second harmonic. Suppression was weaker ($\omega < 1$) in the light flux pathway (consistent with previous work), and also for S-cone directed modulations.
 
+# Acknowledgements
+
+Supported by Biotechnology and Biological Sciences Research Council grant BB/V007580/1 awarded to DHB and ARW.
+
+# Declaration of interests
+
+The authors declare no competing interests.
+
 # References
 
 <div id='refs'> </div>
+
+\pagebreak
 
 # Supplementary material
 
@@ -2370,7 +2362,7 @@ We have demonstrated that binocular combination of temporal flickering light in 
 
 ```{r primarylinearity, fig.cap="Linearity of primaries for each device. The calibration measures were summed (i.e., total unweighted irradiance), and the input-output relationship summarised by a 7th order polynomial reverse curve fit. By applying the coefficients of the regression, it is possible to achieve a linear output in the primaries.", fig.align="center", echo=FALSE}
 
-knitr::include_graphics(paste0(figdir,'SuppFig1.pdf'))
+knitr::include_graphics(paste0(figdir,'gamma_figure.pdf'))
 
 ```
 
