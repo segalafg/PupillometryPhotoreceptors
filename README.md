@@ -2,7 +2,7 @@
 
 These materials are a computationally reproducible version of the paper:
 
-Segala, F.G., Bruno, A., Martin, J.T, Morsi, A.Y., Wade, A.R. & Baker, D.H. (2024). Binocular combination in the autonomic nervous system.
+Segala, F.G., Bruno, A., Martin, J.T, Morsi, A.Y., Wade, A.R. & Baker, D.H. (2025). Binocular combination in the autonomic nervous system.
 
 The file manuscript.Rmd is an R markdown file that will perform all analyses and figure creation, and produce a pdf version of the manuscript.
 
