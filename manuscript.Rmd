@@ -2196,7 +2196,14 @@ dev.off()
 
 # Abstract
 
-Pupil diameters are regulated by the autonomic nervous system, which combines light signals across the eyes independently of the visual cortex. Distinct classes of retinal photoreceptor are involved in this process, with cones and rods driving the initial constriction and intrinsically photosensitive retinal ganglion cells maintaining diameter over prolonged time periods. We investigated binocular combination by targeting different photoreceptor pathways using a novel binocular multiprimary system to modulate the input spectra via silent substitution. At the first harmonic of the modulation frequency, light flux and S-cone responses showed strong binocular facilitation, and weak interocular suppression. Melanopsin responses were invariant to the number of eyes stimulated. Notably, the L-M pathway involved binocular inhibition, whereby responses to binocular stimulation were weaker than for monocular stimulation. The second harmonic involved strong interocular suppression in all pathways, but with some evidence of binocular facilitation. Our results are consistent with a computational model of binocular signal combination (implemented in a Bayesian hierarchical framework), in which the weight of interocular suppression differs across pathways. We also find pathway differences in response phase, consistent with different lag times for phototransduction. This work demonstrates for the first time the algorithm governing binocular combination in the autonomic nervous system.
+**Purpose:** Pupil diameters are regulated by the autonomic nervous system, which combines light signals across the eyes independently of the visual cortex. Distinct classes of retinal photoreceptor are involved in this process, with cones and rods driving the initial constriction and intrinsically photosensitive retinal ganglion cells maintaining diameter over prolonged time periods.
+
+**Methods:** We investigated binocular combination by targeting different photoreceptor pathways using a novel binocular multiprimary system to modulate the input spectra via silent substitution.
+
+**Results:** At the first harmonic of the modulation frequency, light flux and S-cone responses showed strong binocular facilitation, and weak interocular suppression. Melanopsin responses were invariant to the number of eyes stimulated. Notably, the L-M pathway involved binocular inhibition, whereby responses to binocular stimulation were weaker than for monocular stimulation. The second harmonic involved strong interocular suppression in all pathways, but with some evidence of binocular facilitation. Our results are consistent with a computational model of binocular signal combination (implemented in a Bayesian hierarchical framework), in which the weight of interocular suppression differs across pathways. We also find pathway differences in response phase, consistent with different lag times for phototransduction.
+
+**Conclusions:** This work demonstrates for the first time the algorithm governing binocular combination in the autonomic nervous system.
+
 
 # Introduction
 
