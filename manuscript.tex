@@ -104,7 +104,31 @@ Anisa Y. Morsi\(^1\), Alex R. Wade\(^{1,4}\) \& Daniel H. Baker\(^{1,4}\)}
 
 \(^4\)York Biomedical Research Institute, University of York, Heslington, York, YO10 5NG, United Kingdom.
 
-Corresponding author: Federico G. Segala, \url{federico.segala@york.ac.uk}.
+\textbf{Corresponding author}:
+
+Federico G. Segala
+
+Department of Psychology
+
+University of York
+
+Heslington
+
+York, YO10 5DD, United Kingdom
+
+\url{federico.segala@york.ac.uk}.
+
+\textbf{Word count}: 4500
+
+\textbf{Number of Figures}: 5 \textbf{Number of Tables}: 1 \textbf{Number of Supplementary Files}: 0
+
+\textbf{Funding}: Supported by Biotechnology and Biological Sciences Research Council grant BB/V007580/1 awarded to DHB and ARW.
+
+\textbf{Commercial Relationships Disclosure}: F.G. Segala, None; A. Bruno, None; J.T. Martin, None; A.Y. Morsi, None; A.R. Wade, None; D.H. Baker, None
+
+\textbf{Running Head}: Binocular combination in autonomic nervous system
+
+\pagebreak
 
 \hypertarget{abstract}{%
 \section{Abstract}\label{abstract}}
@@ -115,7 +139,7 @@ Corresponding author: Federico G. Segala, \url{federico.segala@york.ac.uk}.
 
 \textbf{Results:} At the first harmonic of the modulation frequency, light flux and S-cone responses showed strong binocular facilitation, and weak interocular suppression. Melanopsin responses were invariant to the number of eyes stimulated. Notably, the L-M pathway involved binocular inhibition, whereby responses to binocular stimulation were weaker than for monocular stimulation. The second harmonic involved strong interocular suppression in all pathways, but with some evidence of binocular facilitation. Our results are consistent with a computational model of binocular signal combination (implemented in a Bayesian hierarchical framework), in which the weight of interocular suppression differs across pathways. We also find pathway differences in response phase, consistent with different lag times for phototransduction.
 
-\textbf{Conclusions:} This work demonstrates for the first time the algorithm governing binocular combination in the autonomic nervous system.
+\textbf{Conclusions:} This work demonstrates for the first time the algorithm governing binocular combination of temporal flickering light in the autonomic nervous system, which depends on the photoreceptor pathway stimulated.
 
 \hypertarget{introduction}{%
 \section{Introduction}\label{introduction}}
@@ -139,7 +163,7 @@ Twenty-four participants were recruited for each of the four experiments for a t
 
 To present synchronised stimulus modulations independently to each eye, two light engines (SpectraTuneLAB, which are thermally stable across time with active cooling according to the manufacturers: LEDMOTIVE Technologies, LLC, Barcelona, Spain), each with 10 independently addressable LED colour channels, were integrated into a customised binocular viewing system. The light engines were operated via a Python interface to their REST API,\textsuperscript{\protect\hyperlink{ref-Martin2022}{23}} which supports synchronous launch and playback of spectral sequences prepared in advance and stored in JSON format. A special command was commissioned from LEDMOTIVE to allow two different stimulus files to be launched simultaneously from the two devices. The synchronisation of the spectra from the two devices was tested and showed that they were synchronised to within approximately 3ms.
 
-When preparing the spectral sequences, the age of participants was used to account for the yellowing of the lenses. We used the silent substitution technique\textsuperscript{\protect\hyperlink{ref-Estevez1982}{24}} to selectively stimulate specific photoreceptor classes. Silent substitution exploits the fact that each photoreceptor class has a distinct spectral tuning that overlaps with the others. Using a multiprimary system, in which the primaries (i.e.~LEDs) have different spectra, it is possible to target one class of photoreceptors while maintaining the others at a constant activity level, effectively silencing them.\textsuperscript{\protect\hyperlink{ref-Shapiro1996}{25},\protect\hyperlink{ref-Spitschan2018}{26}} We calculated silent substitution solutions using the \emph{PySilSub} toolbox,\textsuperscript{\protect\hyperlink{ref-Martin2023}{27}} using linear algebra. The outputs of the two light engines (see Figure \ref{fig:spectraplots}b,c) were calibrated using an Ocean Optics Jaz spectroradiometer, which was wavelength-calibrated to an Argon lamp and intensity calibrated using a NIST-traceable light source. Each primary was also linearized using a polynomial fit (see Figure \ref{fig:primarylinearity} for details). We used the 10-degree cone fundamentals,\textsuperscript{\protect\hyperlink{ref-Stockman2000}{28}} and estimates of melanopsin absorbance spectra from CIE S 026 (discussed in a previous paper\textsuperscript{\protect\hyperlink{ref-Martin2023}{27}}) to calculate \(\alpha\)-opic irradiance.
+When preparing the spectral sequences, the age of participants was used to account for the yellowing of the lenses. We used the silent substitution technique\textsuperscript{\protect\hyperlink{ref-Estevez1982}{24}} to selectively stimulate specific photoreceptor classes. Silent substitution exploits the fact that each photoreceptor class has a distinct spectral tuning that overlaps with the others. Using a multiprimary system, in which the primaries (i.e.~LEDs) have different spectra, it is possible to target one class of photoreceptors while maintaining the others at a constant activity level, effectively silencing them.\textsuperscript{\protect\hyperlink{ref-Shapiro1996}{25},\protect\hyperlink{ref-Spitschan2018}{26}} We calculated silent substitution solutions using the \emph{PySilSub} toolbox,\textsuperscript{\protect\hyperlink{ref-Martin2023}{27}} using linear algebra. The outputs of the two light engines (see Figure \ref{fig:spectraplots}b,c) were calibrated using an Ocean Optics Jaz spectroradiometer, which was wavelength-calibrated to an Argon lamp and intensity calibrated using a NIST-traceable light source. Each primary was also linearised using a polynomial fit (see Figure \ref{fig:primarylinearity} for details). We used the 10-degree cone fundamentals,\textsuperscript{\protect\hyperlink{ref-Stockman2000}{28}} and estimates of melanopsin absorbance spectra from CIE S 026 (discussed in a previous paper\textsuperscript{\protect\hyperlink{ref-Martin2023}{27}}) to calculate \(\alpha\)-opic irradiance.
 
 The output from the light engines was directed through liquid light guides (LLG3-8H: Thorlabs Ltd, Cambridgeshire, UK) and diffused onto semi-opaque and highly diffusive white glass discs with a diameter of 50 mm for even illumination (34-473: Edmund Optics, York, UK). The light guide gaskets were butt-coupled to the light engine diffusers with threaded adapters (SM1A9, AD3LLG: Thorlabs Ltd, Cambridgeshire, UK) and the exiting ends of the light guides were mated with 51 mm depth optical cylinders (SM2L20: Thorlabs Ltd, Cambridgeshire, UK) via appropriately threaded adapters (AD3LLG, SM2A6: Thorlabs Ltd, Cambridgeshire, UK). The stimulus diffuser discs were retained at the front end of the optical cylinders approximately 51 mm from the light source, at which distance the output beam was sufficiently dispersed to afford even illumination of the diffuser when viewed from the front. To guarantee safe illumination levels, a circular neutral-density filter with the same diameter of the white glass discs (50 mm) and an optical density of 0.6 log units was placed in the optical path between the light source and the diffusers. A small circular piece of blackout material with a diameter of approximately 8 degrees (10 mm) was positioned centrally on the front of each diffuser disc to aid as a fusion lock, as a fixation point, and to occlude the fovea.
 
